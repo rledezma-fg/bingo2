@@ -32,21 +32,23 @@ public class MiniBingoCard extends JPanel implements ActionListener {
         this.setBackground(Color.GRAY);
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
-        String[] str = { "Custom", "Diagonal", "Line Across", "Line Down", "Postage Stamp", "Outside Diamond",
-                "Inside Diamond" };
+        String[] str = { "Personalizado", "Diagonal","Equis", "Horizontal", "Vertical", "Esquina", "Diamante interno",
+                "Diamante Externo", "Completa" };
 
-        pattern.put("Custom", Pattern.CUSTOM);
+        pattern.put("Personalizado", Pattern.CUSTOM);
         pattern.put("Diagonal", Pattern.DIAGONAL);
-        pattern.put("Line Across", Pattern.LINE_ACROSS);
-        pattern.put("Line Down", Pattern.LINE_DOWN);
-        pattern.put("Postage Stamp", Pattern.POSTAGE_STAMP);
-        pattern.put("Outside Diamond", Pattern.OUTSIDE_DIAMOND);
-        pattern.put("Inside Diamond", Pattern.INSIDE_DIAMOND);
+        pattern.put("Equis", Pattern.DOUBLEDIAGONAL);
+        pattern.put("Horizontal", Pattern.LINE_ACROSS);
+        pattern.put("Vertical", Pattern.LINE_DOWN);
+        pattern.put("Esquina", Pattern.POSTAGE_STAMP);
+        pattern.put("Diamante interno", Pattern.INSIDE_DIAMOND);
+        pattern.put("Diamante externo", Pattern.OUTSIDE_DIAMOND);
+        pattern.put("Completa", Pattern.FULL);
 
         patternComboBox = new JComboBox<>(str);
         patternComboBox.setBounds(0, 0, 120, 30);
         patternComboBox.addActionListener(this);
-        patternComboBox.setToolTipText("Select Pattern");
+        patternComboBox.setToolTipText("Patrón");
 
         cardPanel = new JPanel();
         cardPanel.setLayout(new GridLayout(5, 5, 1, 1));
@@ -100,15 +102,24 @@ public class MiniBingoCard extends JPanel implements ActionListener {
                     node.get(i).setBackground(Color.RED);
                 }
                 break;
+            case DOUBLEDIAGONAL:
+                clearNodes();
+                for (int i = 0; i < 25; i += 6) {
+                    node.get(i).setBackground(Color.RED);
+                }
+                for (int i = 4; i <= 20; i += 4) {
+                    node.get(i).setBackground(Color.RED);
+                }
+                break;
             case LINE_ACROSS:
                 clearNodes();
-                for (int i = 0; i < 5; i++) {
+                for (int i = 10; i < 15; i++) {
                     node.get(i).setBackground(Color.RED);
                 }
                 break;
             case LINE_DOWN:
                 clearNodes();
-                for (int i = 0; i <= 20; i += 5) {
+                for (int i = 2; i <= 22; i += 5) {
                     node.get(i).setBackground(Color.RED);
                 }
                 break;
@@ -119,19 +130,36 @@ public class MiniBingoCard extends JPanel implements ActionListener {
                 node.get(8).setBackground(Color.RED);
                 node.get(9).setBackground(Color.RED);
                 break;
-            case OUTSIDE_DIAMOND:
-                clearNodes();
-                node.get(2).setBackground(Color.RED);
-                node.get(10).setBackground(Color.RED);
-                node.get(14).setBackground(Color.RED);
-                node.get(22).setBackground(Color.RED);
-                break;
             case INSIDE_DIAMOND:
                 clearNodes();
-                node.get(7).setBackground(Color.RED);
-                node.get(11).setBackground(Color.RED);
-                node.get(13).setBackground(Color.RED);
-                node.get(17).setBackground(Color.RED);
+                for (int fila = 0; fila < 5; fila++) {
+
+                    for (int col = 0; col < 5; col++) {
+                        int dist = Math.abs(fila - (5/2)) + Math.abs(col - (5/2));
+                        if (dist <= (5/2)) {
+                            int index = fila * 5 + col;
+                            node.get(index).setBackground(Color.RED);
+                        }
+                    }
+                }
+                break;
+            case OUTSIDE_DIAMOND:
+                clearNodes();
+                for (int fila = 0; fila < 5; fila++) {
+                    for (int col = 0; col < 5; col++) {
+                        int dist = Math.abs(fila - (5/2)) + Math.abs(col - (5/2));
+                        if (dist > 5/2) {
+                            int index = fila * 5 + col;
+                            node.get(index).setBackground(Color.RED);
+                        }
+                    }
+                }
+                break;
+            case FULL:
+                clearNodes();
+                for (int i = 0; i <= 24; i ++) {
+                    node.get(i).setBackground(Color.RED);
+                }
                 break;
             default:
                 break;
@@ -140,5 +168,5 @@ public class MiniBingoCard extends JPanel implements ActionListener {
 }
 
 enum Pattern {
-    CUSTOM, DIAGONAL, LINE_ACROSS, LINE_DOWN, POSTAGE_STAMP, OUTSIDE_DIAMOND, INSIDE_DIAMOND;
+    CUSTOM, DIAGONAL,DOUBLEDIAGONAL, LINE_ACROSS, LINE_DOWN, POSTAGE_STAMP, OUTSIDE_DIAMOND, INSIDE_DIAMOND, FULL;
 }

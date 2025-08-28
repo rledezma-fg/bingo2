@@ -26,10 +26,10 @@ public class RolledNumberPanel extends JPanel {
         letterLabel = new JLabel("" + letter);
         numberLabel = new JLabel("" + number);
 
-        letterLabel.setFont(new Font("Verdana", Font.BOLD, 30));
+        letterLabel.setFont(new Font("Roboto", Font.BOLD, 30));
         letterLabel.setHorizontalAlignment(JLabel.CENTER);
 
-        numberLabel.setFont(new Font("Verdana", Font.BOLD, 70));
+        numberLabel.setFont(new Font("Roboto", Font.BOLD, 70));
         numberLabel.setHorizontalAlignment(JLabel.CENTER);
 
         this.setLayout(new BorderLayout());
@@ -76,7 +76,7 @@ public class RolledNumberPanel extends JPanel {
     public void updateBingoBallColor() {
 
         if (number > 0 && number < 16)
-            this.setBackground(new Color(0, 131, 202));
+            this.setBackground(new Color(19, 126, 219));
         else if (number < 31)
             this.setBackground(new Color(226, 27, 34));
         else if (number < 46)

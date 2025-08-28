@@ -40,24 +40,24 @@ public class BingoRoller extends JFrame {
     volatile boolean paused = true;
     Object lock = new Object();
 
-    JButton drawButton = new JButton("Draw Next Number");
-    JButton resetButton = new JButton("Reset/New Game");
-    JButton autoButton = new JButton("Auto Draw");
+    JButton drawButton = new JButton("Proximo numero");
+    JButton resetButton = new JButton("Reiniciar/Nuevo juego");
+    JButton autoButton = new JButton("Automatico");
     JSlider speedSlider = new JSlider(1, 5, 3);
     JLabel speedLabel = new JLabel();
 
-    Color color = new Color(19, 81, 219); // Color of frame
+    Color color = new Color(255, 255, 255); // Color of frame
 
     int newRolledNumber = 0;
     int autoDrawSpeed = 3;
 
     BingoRoller() {
 
-        this.setTitle("Bingo Caller");
+        this.setTitle("Bingo FG");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(940, 550);
         this.setLocationRelativeTo(null);
-        this.setResizable(false);
+        //this.setResizable(false);
         this.setLayout(null);
         this.getContentPane().setBackground(color);
 
@@ -71,7 +71,7 @@ public class BingoRoller extends JFrame {
             letterLabel.add(new JLabel("" + bingo.charAt(i)));
             letterLabel.get(i).setFont(new Font("Verdana", Font.BOLD, 25));
             letterLabel.get(i).setHorizontalAlignment(JLabel.CENTER);
-            letterLabel.get(i).setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+            letterLabel.get(i).setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
             letterLabel.get(i).setBackground(Color.YELLOW);
             letterLabel.get(i).setOpaque(true);
             letterPanel.add(letterLabel.get(i));
@@ -81,14 +81,15 @@ public class BingoRoller extends JFrame {
         numberPanel.setLayout(new GridLayout(5, 15, 3, 3));
         numberPanel.setBounds(95, 25, 800, 250);
         numberPanel.setBackground(color);
+        numberPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 
         for (int i = 0; i < 75; i++) {
             numberLabel.add(new JLabel("" + (i + 1)));
-            numberLabel.get(i).setFont(new Font("Verdana", Font.BOLD, 25));
+            numberLabel.get(i).setFont(new Font("Verdana", Font.PLAIN, 22));
             numberLabel.get(i).setHorizontalAlignment(JLabel.CENTER);
-            numberLabel.get(i).setBackground(Color.GRAY);
+            numberLabel.get(i).setBackground(Color.WHITE);
             numberLabel.get(i).setOpaque(true);
-            numberLabel.get(i).setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+            numberLabel.get(i).setBorder(BorderFactory.createLineBorder(Color.white, 1));
             numberPanel.add(numberLabel.get(i));
         }
 
@@ -96,9 +97,9 @@ public class BingoRoller extends JFrame {
 
         // ************* buttons *************
         drawButton.setFocusable(false);
-        drawButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        drawButton.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         drawButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        drawButton.setBounds(160, 330, 150, 45);
+        drawButton.setBounds(145, 330, 140, 40);
         drawButton.addActionListener(new ActionListener() {
 
             @Override
@@ -124,40 +125,40 @@ public class BingoRoller extends JFrame {
         });
 
         resetButton.setFocusable(false);
-        resetButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        resetButton.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         resetButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        resetButton.setBounds(160, 395, 150, 45);
+        resetButton.setBounds(145, 395, 140, 40);
         resetButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                int input = JOptionPane.showConfirmDialog(null, "Start new game?");
+                int input = JOptionPane.showConfirmDialog(null, "Nuevo juego");
                 // 0=yes, 1=no, 2=cancel
 
                 if (input == 0) {
 
-                    numberLabel.stream().forEach(n -> n.setBackground(Color.GRAY));
+                    numberLabel.stream().forEach(n -> n.setBackground(Color.WHITE));
                     rolledNumbers.clear();
 
                 }
 
-                drawButton.setText("Draw Next Number");
+                drawButton.setText("Proximo numero");
                 drawButton.setEnabled(true);
-                autoButton.setText("Auto Draw");
+                autoButton.setText("Automatico");
                 autoButton.setEnabled(true);
 
             }
         });
 
         autoButton.setFocusable(false);
-        autoButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        autoButton.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         autoButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        autoButton.setBounds(350, 330, 150, 35);
+        autoButton.setBounds(300, 330, 150, 40);
         autoButton.addActionListener(e -> autoButtonPressed());
         // auto draw speed slider
         speedSlider.setBackground(color);
-        speedSlider.setBounds(350, 395, 150, 60);
+        speedSlider.setBounds(300, 395, 150, 60);
         speedSlider.setPreferredSize(new Dimension(200, 100));
         speedSlider.setPaintTicks(true);
         speedSlider.setMajorTickSpacing(1);
@@ -165,14 +166,15 @@ public class BingoRoller extends JFrame {
         speedSlider.setPaintLabels(true);
         speedSlider.addChangeListener(e -> setAutoDrawSpeed());
         // slider label
-        speedLabel.setText("Auto Draw Speed");
+        speedLabel.setText("Velocidad");
         speedLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         speedLabel.setForeground(Color.WHITE);
         speedLabel.setBounds(370, 360, 150, 60);
 
         // ********* Mini Bingo Cards **********
-        MiniBingoCard miniCard1 = new MiniBingoCard(620, 310);
-        MiniBingoCard miniCard2 = new MiniBingoCard(770, 310);
+        MiniBingoCard miniCard1 = new MiniBingoCard(480, 310);
+        MiniBingoCard miniCard2 = new MiniBingoCard(620, 310);
+        MiniBingoCard miniCard3 = new MiniBingoCard(770, 310);
 
         this.add(letterPanel);
         this.add(numberPanel);
@@ -184,6 +186,7 @@ public class BingoRoller extends JFrame {
         this.add(speedLabel);
         this.add(miniCard1);
         this.add(miniCard2);
+        this.add(miniCard3);
         this.setVisible(true);
 
     }
@@ -200,12 +203,12 @@ public class BingoRoller extends JFrame {
 
         paused = !paused;
         if (paused) {
-            autoButton.setText("Auto Draw");
+            autoButton.setText("Automatico");
             resetButton.setEnabled(true);
             drawButton.setEnabled(true);
             speedSlider.setEnabled(true);
         } else {
-            autoButton.setText("Pause Auto Draw");
+            autoButton.setText("Pausar");
             resetButton.setEnabled(false);
             drawButton.setEnabled(false);
             speedSlider.setEnabled(false);
@@ -242,7 +245,7 @@ public class BingoRoller extends JFrame {
                     else
                         n.setBackground(Color.GRAY);
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(200);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -257,7 +260,7 @@ public class BingoRoller extends JFrame {
 
             drawButton.setEnabled(false);
             autoButton.setEnabled(false);
-            drawButton.setText("Game Over");
+            drawButton.setText("Fin del juego");
             resetButton.setEnabled(true);
             auto = new Thread(new AutoDraw());
         }
@@ -290,7 +293,7 @@ public class BingoRoller extends JFrame {
 
     private void sleep(long sec) {
         try {
-            Thread.sleep(sec * 1000);
+            Thread.sleep(sec * 500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -305,7 +308,7 @@ public class BingoRoller extends JFrame {
             newRollPanel.setNewNumber(number);
 
             try {
-                Thread.sleep(30);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
