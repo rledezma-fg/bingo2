@@ -55,7 +55,7 @@ public class BingoRoller extends JFrame {
 
         this.setTitle("Bingo FG");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(940, 550);
+        this.setSize(1200, 550);
         this.setLocationRelativeTo(null);
         //this.setResizable(false);
         this.setLayout(null);
@@ -172,9 +172,10 @@ public class BingoRoller extends JFrame {
         speedLabel.setBounds(370, 360, 150, 60);
 
         // ********* Mini Bingo Cards **********
-        MiniBingoCard miniCard1 = new MiniBingoCard(480, 310);
-        MiniBingoCard miniCard2 = new MiniBingoCard(620, 310);
-        MiniBingoCard miniCard3 = new MiniBingoCard(770, 310);
+        MiniBingoCard miniCard1 = new MiniBingoCard(910, 25);
+        MiniBingoCard miniCard2 = new MiniBingoCard(1010, 25);
+        MiniBingoCard miniCard3 = new MiniBingoCard(910, 157);
+        MiniBingoCard miniCard4 = new MiniBingoCard(1010, 157);
 
         this.add(letterPanel);
         this.add(numberPanel);
@@ -187,6 +188,7 @@ public class BingoRoller extends JFrame {
         this.add(miniCard1);
         this.add(miniCard2);
         this.add(miniCard3);
+        this.add(miniCard4);
         this.setVisible(true);
 
     }

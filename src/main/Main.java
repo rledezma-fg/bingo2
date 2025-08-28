@@ -8,10 +8,4 @@ public class Main {
 
     }
 }
-/*
-B Azul
-I Rojo
-N Blanco
-G Verde
-O Amarillo
-*/
+

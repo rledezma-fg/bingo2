@@ -1,7 +1,6 @@
 package main;
 
-import java.awt.Color;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -28,12 +27,12 @@ public class MiniBingoCard extends JPanel implements ActionListener {
     MiniBingoCard(int x, int y) {
 
         this.setLayout(null);
-        this.setBounds(x, y, 120, 170);
+        this.setBounds(x, y, (int) (120 *0.7) , (int)(170 * 0.7));
         this.setBackground(Color.GRAY);
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
         String[] str = { "Personalizado", "Diagonal","Equis", "Horizontal", "Vertical", "Esquina", "Diamante interno",
-                "Diamante Externo", "Completa" };
+                "Diamante externo", "Completa" };
 
         pattern.put("Personalizado", Pattern.CUSTOM);
         pattern.put("Diagonal", Pattern.DIAGONAL);
@@ -49,10 +48,11 @@ public class MiniBingoCard extends JPanel implements ActionListener {
         patternComboBox.setBounds(0, 0, 120, 30);
         patternComboBox.addActionListener(this);
         patternComboBox.setToolTipText("Patrón");
+        patternComboBox.setFont(new java.awt.Font("Verdana", Font.PLAIN, 10));
 
         cardPanel = new JPanel();
         cardPanel.setLayout(new GridLayout(5, 5, 1, 1));
-        cardPanel.setBounds(0, 30, 120, 140);
+        cardPanel.setBounds(0, (int)(30 * 0.7), (int) (120*0.70), (int) (140*0.7));
         cardPanel.setBackground(Color.GRAY);
         cardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
