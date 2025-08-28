@@ -194,7 +194,8 @@ public class BingoRoller extends JFrame {
     }
 
     private void setAutoDrawSpeed() {
-        autoDrawSpeed = speedSlider.getValue();
+        autoDrawSpeed = 6 - (speedSlider.getValue());
+
     }
 
     private void autoButtonPressed() {

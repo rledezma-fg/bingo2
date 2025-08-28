@@ -17,7 +17,7 @@ public class MiniBingoCard extends JPanel implements ActionListener {
     /**
      *
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     ArrayList<JButton> node = new ArrayList<>();
     Map<String, Pattern> pattern = new HashMap<>();
@@ -54,7 +54,7 @@ public class MiniBingoCard extends JPanel implements ActionListener {
         cardPanel.setLayout(new GridLayout(5, 5, 1, 1));
         cardPanel.setBounds(0, (int)(30 * 0.7), (int) (120*0.70), (int) (140*0.7));
         cardPanel.setBackground(Color.GRAY);
-        cardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        cardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
         for (int i = 0; i < 25; i++) {
 
