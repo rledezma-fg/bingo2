@@ -17,7 +17,7 @@ public class MiniBingoCard extends JPanel implements ActionListener {
     /**
      *
      */
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 1L ;
 
     ArrayList<JButton> node = new ArrayList<>();
     Map<String, Pattern> pattern = new HashMap<>();

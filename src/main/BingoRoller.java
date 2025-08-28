@@ -1,9 +1,6 @@
 package main;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -17,13 +14,24 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
+import javax.swing.JTextField;
+import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
+import javax.swing.JComboBox;
+
+
 public class BingoRoller extends JFrame {
-
-    /**
-     *
-     */
-
     private static final long serialVersionUID = 1L;
+
+    //para botones por minicard
+    JTextField ganadorF1, ganadorF2, ganadorF3, ganadorF4;
+    JTextField campoFinalizacion;
+
+    //para los logs
+    JTextArea ganadoresLog;
+    JScrollPane ganadoresScroll;
+
+    int numJuego = 1;
 
     Random rand = new Random();
     JPanel letterPanel;
@@ -177,6 +185,39 @@ public class BingoRoller extends JFrame {
         MiniBingoCard miniCard3 = new MiniBingoCard(910, 157);
         MiniBingoCard miniCard4 = new MiniBingoCard(1010, 157);
 
+        //******** campos para ganadores por card ******
+        ganadorF1 = new JTextField();
+        ganadorF2 = new JTextField();
+        ganadorF3 = new JTextField();
+        ganadorF4 = new JTextField();
+
+        ganadorF1.setBounds(910,  (int) (170 * 0.7)+25 + 6, 190, 24);
+        ganadorF1.setBounds(1010, (int) (170 * 0.7)+25 + 6, 190, 24);
+        ganadorF1.setBounds(910,  (int) (170 * 0.7)+157 + 6, 190, 24);
+        ganadorF1.setBounds(1010, (int) (170 * 0.7)+157 + 6, 190, 24);
+
+        campoFinalizacion = new JTextField();
+        campoFinalizacion.setToolTipText("escribe nota y presiona enter paa registrar gandores");
+        campoFinalizacion.setBounds(145,450,305,28);
+
+        campoFinalizacion.addActionListener( e-> {
+            registrarJuegoActual(
+                    miniCard1,  ganadorF1,
+                    miniCard2, ganadorF2,
+                    miniCard3, ganadorF3,
+                    miniCard4, ganadorF4,
+                    campoFinalizacion.getText().trim()
+            );
+            campoFinalizacion.setText("");
+        });
+
+        ganadoresLog = new JTextArea();
+        ganadoresLog.setEditable(false);
+        ganadoresLog.setFont(new Font("Monoespaced", Font.PLAIN, 12));
+        ganadoresScroll = new ScrollPane();
+
+        ganadoresScroll.setBounds(910,(int) (170 * 0.7)+ 157 + 6 + 36, 290, 140 );
+
         this.add(letterPanel);
         this.add(numberPanel);
         this.add(newRollPanel);
@@ -189,9 +230,55 @@ public class BingoRoller extends JFrame {
         this.add(miniCard2);
         this.add(miniCard3);
         this.add(miniCard4);
+        this.add(ganadorF1);
+        this.add(ganadorF2);
+        this.add(ganadorF3);
+        this.add(ganadorF4);
+        this.add(campoFinalizacion);
+        this.add(ganadoresScroll);
         this.setVisible(true);
+        appendGameHeader();
+    }
+
+    private void appendGameHeader(){
+        ganadoresLog.append(String.format("---- Juego %d -----%n", numJuego));
+    }
+    private void registrarJuegoActual(
+            MiniBingoCard c1, JTextField f1,
+            MiniBingoCard c2, JTextField f2,
+            MiniBingoCard c3, JTextField f3,
+            MiniBingoCard c4, JTextField f4, String note){
+        addWinnerLine(c1, f1);
+        addWinnerLine(c2, f2);
+        addWinnerLine(c3, f3);
+        addWinnerLine(c4, f4);
+
+        if(!note.isEmpty()){
+            ganadoresLog.append("nota: "+ note +"/n");
+        }
+        ganadoresLog.append("/n /n");
+
+        //Limpia para preparar el siguiente juego
+        f1.setText("");
+        f2.setText("");
+        f3.setText("");
+        f4.setText("");
+
+        //Prepara siguiente encabezado
+        numJuego++;
+        appendGameHeader();
+    }
+
+    private void addWinnerLine( MiniBingoCard card, JTextField field ){
+        String name = field.getText().trim();
+        if(name.isEmpty()) return;
+
+        String patternName = card.getSelectedPatternName();
+        ganadoresLog.append(String.format("Patron: %s%n", patternName.toLowerCase()));
+        ganadoresLog.append(String.format("Ganador: %s%n%n", name));
 
     }
+
 
     private void setAutoDrawSpeed() {
         autoDrawSpeed = 6 - (speedSlider.getValue());
