@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import javax.swing.JComboBox;
+import javax.swing.text.DefaultCaret;
 
 
 public class BingoRoller extends JFrame {
@@ -197,11 +198,16 @@ public class BingoRoller extends JFrame {
         ganadorF3 = new JTextField();
         ganadorF4 = new JTextField();
 
+        ganadorF1.setBounds(miniCard1.getX(), miniCard1.getY() + miniCard1.getHeight() + 2, miniCard1.getWidth(), 22);
+        ganadorF2.setBounds(miniCard2.getX(), miniCard2.getY() + miniCard2.getHeight() + 2, miniCard2.getWidth(), 22);
+        ganadorF3.setBounds(miniCard3.getX(), miniCard3.getY() + miniCard3.getHeight() + 2, miniCard3.getWidth(), 22);
+        ganadorF4.setBounds(miniCard4.getX(), miniCard4.getY() + miniCard4.getHeight() + 2, miniCard4.getWidth(), 22);
+        /*
         ganadorF1.setBounds(910,  txtGanadoresHeight  +23 + 6, txtGanadoresWidth +1, 24);
         ganadorF2.setBounds(1010, txtGanadoresHeight  +23 + 6, txtGanadoresWidth +1, 24);
         ganadorF3.setBounds(910,  txtGanadoresHeight +175 + 6, txtGanadoresWidth +1, 24);
         ganadorF4.setBounds(1010, txtGanadoresHeight +175 + 6, txtGanadoresWidth +1, 24);
-
+        */
         campoFinalizacion = new JTextField();
         campoFinalizacion.setToolTipText("escribe nota y presiona enter paa registrar gandores");
 
@@ -220,8 +226,10 @@ public class BingoRoller extends JFrame {
 
         ganadoresLog = new JTextArea();
         ganadoresLog.setEditable(false);
-        ganadoresLog.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        ganadoresScroll = new JScrollPane();
+        ganadoresLog.setFont(new Font("Verdana", Font.PLAIN, 12));
+        DefaultCaret caret = (DefaultCaret) ganadoresLog.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        ganadoresScroll = new JScrollPane(ganadoresLog);
 
         ganadoresScroll.setBounds(910,txtGanadoresHeight+ 245  , 185, 100 );
 
@@ -261,9 +269,9 @@ public class BingoRoller extends JFrame {
         addWinnerLine(c4, f4);
 
         if(!note.isEmpty()){
-            ganadoresLog.append("nota: "+ note +"/n");
+            ganadoresLog.append("nota: "+ note +"\n");
         }
-        ganadoresLog.append("/n /n");
+        ganadoresLog.append("\n");
 
         //Limpia para preparar el siguiente juego
         f1.setText("");

@@ -45,7 +45,7 @@ public class MiniBingoCard extends JPanel implements ActionListener {
         pattern.put("Completa", Pattern.FULL);
 
         patternComboBox = new JComboBox<>(str);
-        patternComboBox.setBounds(0, 0, 120, 30);
+        patternComboBox.setBounds(0, 0, (int) (120*0.70), 20);
         patternComboBox.addActionListener(this);
         patternComboBox.setToolTipText("Patrón");
         patternComboBox.setFont(new java.awt.Font("Verdana", Font.PLAIN, 10));
@@ -81,7 +81,7 @@ public class MiniBingoCard extends JPanel implements ActionListener {
         return (sel == null) ? "" : sel.toString();
     }
 
-    public void setPAtternByName(String name){
+    public void setPatternByName(String name){
         patternComboBox.setSelectedItem(name);
         actionPerformed(new java.awt.event.ActionEvent(
                 patternComboBox, ActionEvent.ACTION_PERFORMED, "set"));
