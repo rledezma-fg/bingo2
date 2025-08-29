@@ -27,6 +27,7 @@ public class BingoRoller extends JFrame {
     JTextField ganadorF1, ganadorF2, ganadorF3, ganadorF4;
     JTextField campoFinalizacion;
 
+
     //para los logs
     JTextArea ganadoresLog;
     JScrollPane ganadoresScroll;
@@ -133,9 +134,9 @@ public class BingoRoller extends JFrame {
         });
 
         resetButton.setFocusable(false);
-        resetButton.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+        resetButton.setBorder(BorderFactory.createLineBorder(Color.GRAY, 5));
         resetButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        resetButton.setBounds(145, 395, 140, 40);
+        resetButton.setBounds(145, 380, 140, 40);
         resetButton.addActionListener(new ActionListener() {
 
             @Override
@@ -164,9 +165,10 @@ public class BingoRoller extends JFrame {
         autoButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
         autoButton.setBounds(300, 330, 150, 40);
         autoButton.addActionListener(e -> autoButtonPressed());
+
         // auto draw speed slider
         speedSlider.setBackground(color);
-        speedSlider.setBounds(300, 395, 150, 60);
+        speedSlider.setBounds(300, 375, 150, 60);
         speedSlider.setPreferredSize(new Dimension(200, 100));
         speedSlider.setPaintTicks(true);
         speedSlider.setMajorTickSpacing(1);
@@ -177,9 +179,9 @@ public class BingoRoller extends JFrame {
         speedLabel.setText("Velocidad");
         speedLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         speedLabel.setForeground(Color.WHITE);
-        speedLabel.setBounds(370, 360, 150, 60);
+        speedLabel.setBounds(370, 340, 150, 60);
 
-        //******cposiciones constantes para minibingo cards y fields de ganador
+        //******posiciones constantes para minibingo cards y fields de ganador
         int txtGanadoresHeight = (int)(165 * 0.7), txtGanadoresWidth = (int) (120 * 0.7);
 
 
@@ -202,7 +204,8 @@ public class BingoRoller extends JFrame {
 
         campoFinalizacion = new JTextField();
         campoFinalizacion.setToolTipText("escribe nota y presiona enter paa registrar gandores");
-        campoFinalizacion.setBounds(145,490,305,28);
+
+        campoFinalizacion.setBounds(910,325,185,28);
 
         campoFinalizacion.addActionListener( e-> {
             registrarJuegoActual(
@@ -220,7 +223,7 @@ public class BingoRoller extends JFrame {
         ganadoresLog.setFont(new Font("Monospaced", Font.PLAIN, 12));
         ganadoresScroll = new JScrollPane();
 
-        ganadoresScroll.setBounds(910,txtGanadoresHeight+ 215  , 185, 140 );
+        ganadoresScroll.setBounds(910,txtGanadoresHeight+ 245  , 185, 100 );
 
         this.add(letterPanel);
         this.add(numberPanel);
