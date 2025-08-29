@@ -14,11 +14,8 @@ import javax.swing.JPanel;
 
 public class MiniBingoCard extends JPanel implements ActionListener {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L ;
-
+    boolean bloquear = false;
     ArrayList<JButton> node = new ArrayList<>();
     Map<String, Pattern> pattern = new HashMap<>();
     JPanel cardPanel, comboBoxPanel;
@@ -96,7 +93,7 @@ public class MiniBingoCard extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        if (bloquear) return;
         // sets the value of combobox to custom when the user changes the card
         for (int i = 0; i < 25; i++) {
             if (e.getSource() == node.get(i)) {

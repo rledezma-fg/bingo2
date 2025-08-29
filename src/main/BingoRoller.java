@@ -34,6 +34,10 @@ public class BingoRoller extends JFrame {
     JScrollPane ganadoresScroll;
     JTextArea numerosLog;
     JScrollPane numerosScroll;
+    java.util.List<String> dibujarNumlog = new java.util.ArrayList<String>();
+    int numLog_cols = 5;
+    int col_width = 12;
+    boolean llenadoXColumna = false;
 
     int numJuego = 1;
 
@@ -60,7 +64,6 @@ public class BingoRoller extends JFrame {
 
     Color color = new Color(255, 255, 255); // Color of frame
 
-    int newRolledNumber = 0;
     int autoDrawSpeed = 3;
 
     BingoRoller() {
@@ -152,8 +155,16 @@ public class BingoRoller extends JFrame {
 
                     numberLabel.stream().forEach(n -> n.setBackground(Color.WHITE));
                     rolledNumbers.clear();
+                    dibujarNumlog.clear();
                     numerosLog.setText("");
-
+                    miniCard1.resetCard();
+                    miniCard2.resetCard();
+                    miniCard3.resetCard();
+                    miniCard4.resetCard();
+                    ganadorF1.setText(""); ganadorF1.setEditable(true); ganadorF1.setEnabled(true);ganadorF1.setBackground(color.WHITE);
+                    ganadorF2.setText(""); ganadorF2.setEditable(true); ganadorF2.setEnabled(true);ganadorF2.setBackground(color.WHITE);
+                    ganadorF3.setText(""); ganadorF3.setEditable(true); ganadorF3.setEnabled(true);ganadorF3.setBackground(color.WHITE);
+                    ganadorF4.setText(""); ganadorF4.setEditable(true); ganadorF4.setEnabled(true);ganadorF4.setBackground(color.WHITE);
                 }
 
                 drawButton.setText("Proximo numero");
@@ -205,6 +216,13 @@ public class BingoRoller extends JFrame {
         ganadorF2.setBounds(miniCard2.getX(), miniCard2.getY() + miniCard2.getHeight() + 2, miniCard2.getWidth(), 22);
         ganadorF3.setBounds(miniCard3.getX(), miniCard3.getY() + miniCard3.getHeight() + 2, miniCard3.getWidth(), 22);
         ganadorF4.setBounds(miniCard4.getX(), miniCard4.getY() + miniCard4.getHeight() + 2, miniCard4.getWidth(), 22);
+
+        /*bloquear ganadores*/
+        ganadorF1.addActionListener(ev -> bloquearGanador(miniCard1, ganadorF1));
+        ganadorF2.addActionListener(ev -> bloquearGanador(miniCard2, ganadorF2));
+        ganadorF3.addActionListener(ev -> bloquearGanador(miniCard3, ganadorF3));
+        ganadorF4.addActionListener(ev -> bloquearGanador(miniCard4, ganadorF4));
+
         /*
         ganadorF1.setBounds(910,  txtGanadoresHeight  +23 + 6, txtGanadoresWidth +1, 24);
         ganadorF2.setBounds(1010, txtGanadoresHeight  +23 + 6, txtGanadoresWidth +1, 24);
@@ -229,7 +247,7 @@ public class BingoRoller extends JFrame {
         //log de numeros cantados
         numerosLog = new JTextArea();
         numerosLog.setEditable(false);
-        numerosLog.setFont(new Font("Verdana", Font.PLAIN, 12));
+        numerosLog.setFont(new Font("Courier new", Font.PLAIN, 12));
 
         numerosScroll = new JScrollPane(numerosLog);
         numerosScroll.setBounds(465, 325, 435, 135);
@@ -338,20 +356,14 @@ public class BingoRoller extends JFrame {
     }
 
     public void draw() {
-
         int number;
-
         do {
-
             number = rand.nextInt(1, 76);
-
         } while (rolledNumbers.contains(number));
 
         rolledNumbers.add(number);
         newRollPanel.setNewNumber(number);
-        char letter = newRollPanel.letter;
-        numerosLog.append("Numero: " + letter +"-" + number +"\n");
-        numerosLog.setCaretPosition(numerosLog.getDocument().getLength());
+        agregarNumerosLog(newRollPanel.letter,number);
 
         // blinking animation
         for (JLabel n : numberLabel) {
@@ -434,6 +446,46 @@ public class BingoRoller extends JFrame {
             }
         }
     }
+    private void agregarNumerosLog(char letter, int number){
+        dibujarNumlog.add(String.format("Num(%s%d)", letter, number));
+        renderNumerosLog();
+    }
+    private void renderNumerosLog(){
+        int n = dibujarNumlog.size();
+        if(n == 0){
+            numerosLog.setText("");
+            return;
+        }
+        int cols = Math.max(1, numLog_cols);
+        int rows = (int) Math.ceil(n/(double) cols);
+        StringBuilder sb = new StringBuilder();
+
+        if(llenadoXColumna){ //por filas
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < cols; c++) {
+                    int idx = c * rows + r;
+                    if(idx<n){
+                        sb.append(String.format("%-" + col_width + "s", dibujarNumlog.get(idx)));
+                    }
+                }
+                sb.append('\n');
+            }
+        }else{ //por conlumas
+            for(int r = 0; r<rows; r ++){
+                for (int c = 0; c <cols; c++) {
+                    int idx = r * cols +c;
+                    if(idx < n){
+                        sb.append(String.format("%-" + col_width + "s", dibujarNumlog.get(idx)));
+                    }
+                }
+                sb.append('\n');
+            }
+        }
+        numerosLog.setText(sb.toString());
+        numerosLog.setCaretPosition(numerosLog.getDocument().getLength());
+    }
+
+
 
     class AutoDraw implements Runnable {
         public void run() {
