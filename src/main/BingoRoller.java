@@ -23,6 +23,11 @@ import javax.swing.text.DefaultCaret;
 
 public class BingoRoller extends JFrame {
     private static final long serialVersionUID = 1L;
+    // ********* Mini Bingo Cards **********
+    MiniBingoCard miniCard1 = new MiniBingoCard(910, 25);
+    MiniBingoCard miniCard2 = new MiniBingoCard(1010, 25);
+    MiniBingoCard miniCard3 = new MiniBingoCard(910, 177);
+    MiniBingoCard miniCard4 = new MiniBingoCard(1010, 177);
 
     //para botones por minicard
     JTextField ganadorF1, ganadorF2, ganadorF3, ganadorF4;
@@ -161,10 +166,10 @@ public class BingoRoller extends JFrame {
                     miniCard2.resetCard();
                     miniCard3.resetCard();
                     miniCard4.resetCard();
-                    ganadorF1.setText(""); ganadorF1.setEditable(true); ganadorF1.setEnabled(true);ganadorF1.setBackground(color.WHITE);
-                    ganadorF2.setText(""); ganadorF2.setEditable(true); ganadorF2.setEnabled(true);ganadorF2.setBackground(color.WHITE);
-                    ganadorF3.setText(""); ganadorF3.setEditable(true); ganadorF3.setEnabled(true);ganadorF3.setBackground(color.WHITE);
-                    ganadorF4.setText(""); ganadorF4.setEditable(true); ganadorF4.setEnabled(true);ganadorF4.setBackground(color.WHITE);
+                    ganadorF1.setText(""); ganadorF1.setEditable(true); ganadorF1.setEnabled(true);ganadorF1.setBackground(Color.WHITE);
+                    ganadorF2.setText(""); ganadorF2.setEditable(true); ganadorF2.setEnabled(true);ganadorF2.setBackground(Color.WHITE);
+                    ganadorF3.setText(""); ganadorF3.setEditable(true); ganadorF3.setEnabled(true);ganadorF3.setBackground(Color.WHITE);
+                    ganadorF4.setText(""); ganadorF4.setEditable(true); ganadorF4.setEnabled(true);ganadorF4.setBackground(Color.WHITE);
                 }
 
                 drawButton.setText("Proximo numero");
@@ -199,12 +204,6 @@ public class BingoRoller extends JFrame {
         //******posiciones constantes para minibingo cards y fields de ganador
         int txtGanadoresHeight = (int)(165 * 0.7), txtGanadoresWidth = (int) (120 * 0.7);
 
-
-        // ********* Mini Bingo Cards **********
-        MiniBingoCard miniCard1 = new MiniBingoCard(910, 25);
-        MiniBingoCard miniCard2 = new MiniBingoCard(1010, 25);
-        MiniBingoCard miniCard3 = new MiniBingoCard(910, 177);
-        MiniBingoCard miniCard4 = new MiniBingoCard(1010, 177);
 
         //******** campos para ganadores por card ******
         ganadorF1 = new JTextField();
@@ -355,6 +354,16 @@ public class BingoRoller extends JFrame {
 
     }
 
+    private void bloquearGanador(MiniBingoCard card, JTextField nom){
+        String nombre = nom.getText().trim();
+        if(nombre.isEmpty()) return;
+
+        card.bloquearGanador();
+        nom.setEditable(false);
+        nom.setEnabled(false);
+        nom.setBackground(new Color(235,235,235));
+
+    }
     public void draw() {
         int number;
         do {
