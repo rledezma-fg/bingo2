@@ -32,6 +32,8 @@ public class BingoRoller extends JFrame {
     //para los logs
     JTextArea ganadoresLog;
     JScrollPane ganadoresScroll;
+    JTextArea numerosLog;
+    JScrollPane numerosScroll;
 
     int numJuego = 1;
 
@@ -73,7 +75,7 @@ public class BingoRoller extends JFrame {
 
         letterPanel = new JPanel();
         letterPanel.setLayout(new GridLayout(5, 1, 3, 3));
-        letterPanel.setBounds(25, 25, 50, 250);
+        letterPanel.setBounds(25, 25, 50, 285);
         letterPanel.setBackground(color);
 
         String bingo = "BINGO";
@@ -89,7 +91,7 @@ public class BingoRoller extends JFrame {
 
         numberPanel = new JPanel();
         numberPanel.setLayout(new GridLayout(5, 15, 3, 3));
-        numberPanel.setBounds(95, 25, 800, 250);
+        numberPanel.setBounds(95, 25, 800, 285);
         numberPanel.setBackground(color);
         numberPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 
@@ -150,6 +152,7 @@ public class BingoRoller extends JFrame {
 
                     numberLabel.stream().forEach(n -> n.setBackground(Color.WHITE));
                     rolledNumbers.clear();
+                    numerosLog.setText("");
 
                 }
 
@@ -223,7 +226,16 @@ public class BingoRoller extends JFrame {
             );
             campoFinalizacion.setText("");
         });
+        //log de numeros cantados
+        numerosLog = new JTextArea();
+        numerosLog.setEditable(false);
+        numerosLog.setFont(new Font("Verdana", Font.PLAIN, 12));
 
+        numerosScroll = new JScrollPane(numerosLog);
+        numerosScroll.setBounds(465, 325, 435, 135);
+        this.add(numerosScroll);
+
+        //log de ganadores
         ganadoresLog = new JTextArea();
         ganadoresLog.setEditable(false);
         ganadoresLog.setFont(new Font("Verdana", Font.PLAIN, 12));
@@ -337,6 +349,9 @@ public class BingoRoller extends JFrame {
 
         rolledNumbers.add(number);
         newRollPanel.setNewNumber(number);
+        char letter = newRollPanel.letter;
+        numerosLog.append("Numero: " + letter +"-" + number +"\n");
+        numerosLog.setCaretPosition(numerosLog.getDocument().getLength());
 
         // blinking animation
         for (JLabel n : numberLabel) {

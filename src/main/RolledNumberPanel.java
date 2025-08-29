@@ -46,8 +46,9 @@ public class RolledNumberPanel extends JPanel {
         this.number = number;
 
         numberLabel.setText("" + number);
-        updateBingoLetter();
+        char c = updateBingoLetter();
         updateBingoBallColor();
+        this.letter= c;
     }
 
     public void setLetterLabel(char c) {
@@ -56,21 +57,35 @@ public class RolledNumberPanel extends JPanel {
 
     }
 
-    public void updateBingoLetter() {
-
-        if (number == 0)
+    public char updateBingoLetter() {
+        char c= ' ';
+        if (number == 0) {
+            c = ' ';
             letterLabel.setText(" ");
-        else if (number > 0 && number < 16)
+        }
+        else if (number > 0 && number < 16){
+            c = 'B';
             letterLabel.setText("B");
-        else if (number < 31)
+        }
+        else if (number < 31) {
+            c = 'I';
             letterLabel.setText("I");
-        else if (number < 46)
+        }
+        else if (number < 46) {
+            c = 'N';
             letterLabel.setText("N");
-        else if (number < 61)
+        }
+        else if (number < 61) {
+            c = 'G';
             letterLabel.setText("G");
-        else if (number < 76)
+        }
+        else if (number < 76) {
+            c = 'O';
             letterLabel.setText("O");
+        }
 
+        letterLabel.setText(String.valueOf(c));
+        return c;
     }
 
     public void updateBingoBallColor() {
