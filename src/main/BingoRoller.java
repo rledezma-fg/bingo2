@@ -179,11 +179,15 @@ public class BingoRoller extends JFrame {
         speedLabel.setForeground(Color.WHITE);
         speedLabel.setBounds(370, 360, 150, 60);
 
+        //******cposiciones constantes para minibingo cards y fields de ganador
+        int txtGanadoresHeight = (int)(165 * 0.7), txtGanadoresWidth = (int) (120 * 0.7);
+
+
         // ********* Mini Bingo Cards **********
         MiniBingoCard miniCard1 = new MiniBingoCard(910, 25);
         MiniBingoCard miniCard2 = new MiniBingoCard(1010, 25);
-        MiniBingoCard miniCard3 = new MiniBingoCard(910, 157);
-        MiniBingoCard miniCard4 = new MiniBingoCard(1010, 157);
+        MiniBingoCard miniCard3 = new MiniBingoCard(910, 177);
+        MiniBingoCard miniCard4 = new MiniBingoCard(1010, 177);
 
         //******** campos para ganadores por card ******
         ganadorF1 = new JTextField();
@@ -191,14 +195,14 @@ public class BingoRoller extends JFrame {
         ganadorF3 = new JTextField();
         ganadorF4 = new JTextField();
 
-        ganadorF1.setBounds(910,  (int) (170 * 0.7)+25 + 6, 190, 24);
-        ganadorF1.setBounds(1010, (int) (170 * 0.7)+25 + 6, 190, 24);
-        ganadorF1.setBounds(910,  (int) (170 * 0.7)+157 + 6, 190, 24);
-        ganadorF1.setBounds(1010, (int) (170 * 0.7)+157 + 6, 190, 24);
+        ganadorF1.setBounds(910,  txtGanadoresHeight  +23 + 6, txtGanadoresWidth +1, 24);
+        ganadorF2.setBounds(1010, txtGanadoresHeight  +23 + 6, txtGanadoresWidth +1, 24);
+        ganadorF3.setBounds(910,  txtGanadoresHeight +175 + 6, txtGanadoresWidth +1, 24);
+        ganadorF4.setBounds(1010, txtGanadoresHeight +175 + 6, txtGanadoresWidth +1, 24);
 
         campoFinalizacion = new JTextField();
         campoFinalizacion.setToolTipText("escribe nota y presiona enter paa registrar gandores");
-        campoFinalizacion.setBounds(145,450,305,28);
+        campoFinalizacion.setBounds(145,490,305,28);
 
         campoFinalizacion.addActionListener( e-> {
             registrarJuegoActual(
@@ -213,10 +217,10 @@ public class BingoRoller extends JFrame {
 
         ganadoresLog = new JTextArea();
         ganadoresLog.setEditable(false);
-        ganadoresLog.setFont(new Font("Monoespaced", Font.PLAIN, 12));
-        ganadoresScroll = new ScrollPane();
+        ganadoresLog.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        ganadoresScroll = new JScrollPane();
 
-        ganadoresScroll.setBounds(910,(int) (170 * 0.7)+ 157 + 6 + 36, 290, 140 );
+        ganadoresScroll.setBounds(910,txtGanadoresHeight+ 215  , 185, 140 );
 
         this.add(letterPanel);
         this.add(numberPanel);

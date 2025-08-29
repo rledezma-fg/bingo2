@@ -76,6 +76,24 @@ public class MiniBingoCard extends JPanel implements ActionListener {
 
     }
 
+    public String getSelectedPatternName(){
+        Object sel = patternComboBox. getSelectedItem();
+        return (sel == null) ? "" : sel.toString();
+    }
+
+    public void setPAtternByName(String name){
+        patternComboBox.setSelectedItem(name);
+        actionPerformed(new java.awt.event.ActionEvent(
+                patternComboBox, ActionEvent.ACTION_PERFORMED, "set"));
+    }
+
+    public void setInteractive(boolean on){
+        patternComboBox.setEnabled(on);
+        for (JButton b : node) {
+            b.setEnabled(on);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
 
