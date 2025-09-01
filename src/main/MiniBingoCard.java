@@ -160,10 +160,15 @@ public class MiniBingoCard extends JPanel implements ActionListener {
                 break;
             case POSTAGE_STAMP:
                 clearNodes();
+                node.get(2).setBackground(Color.RED);
                 node.get(3).setBackground(Color.RED);
                 node.get(4).setBackground(Color.RED);
+                node.get(7).setBackground(Color.RED);
                 node.get(8).setBackground(Color.RED);
                 node.get(9).setBackground(Color.RED);
+                node.get(12).setBackground(Color.RED);
+                node.get(13).setBackground(Color.RED);
+                node.get(14).setBackground(Color.RED);
                 break;
             case INSIDE_DIAMOND:
                 clearNodes();
