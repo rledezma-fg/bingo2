@@ -17,6 +17,7 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
+
 import javax.swing.text.DefaultCaret;
 
 public class BingoRoller extends JFrame {
@@ -77,8 +78,8 @@ public class BingoRoller extends JFrame {
 /*tamaño general*/
         this.setTitle("Bingo FG");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(1100, 550);
-        this.setMinimumSize(new Dimension(1100, 550));          // <-- tamaño mínimo
+        this.setSize(1100, 650);
+        this.setMinimumSize(new Dimension(1100, 650));          // <-- tamaño mínimo
         this.setLocationRelativeTo(null);
         //this.setResizable(false);
         this.setLayout(new BorderLayout());                     // <-- BorderLayout en el frame
@@ -573,20 +574,47 @@ public class BingoRoller extends JFrame {
     private JPanel buildHeaderPanel() {
         JPanel header = new JPanel(new BorderLayout());
         header.setBorder(BorderFactory.createEmptyBorder(6, 10, 6, 10));
-        header.setBackground(new Color(255, 255, 255));
+        header.setBackground(Color.WHITE);
 
-        JLabel logo = new JLabel();
-        JLabel title = new JLabel("Bingo FG", JLabel.CENTER);
-        title.setFont(new Font("Verdana", Font.BOLD, 20));
-        title.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        // inicio con espacio para el logo izquierdo
+        JLabel logoIzq = new JLabel();
+        try {
+            ImageIcon icon = new ImageIcon("img/fg logo.png");
+            if (icon.getIconWidth() > 0 && icon.getIconHeight() > 0) {
+                int h = 160;
+                int w = (int) (icon.getIconWidth() * (h / (double) icon.getIconHeight()));
+                Image scaled = icon.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH);
+                logoIzq.setIcon(new ImageIcon(scaled));
+            }
+        } catch (Exception ignore) {}
+        logoIzq.setHorizontalAlignment(JLabel.LEFT);
 
-        JLabel aviso = new JLabel("Sorteo en curso", JLabel.RIGHT);
-        aviso.setFont(new Font("Verdana", Font.PLAIN, 12));
-        aviso.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        // inicio con espacio para el logo derecho
+        JLabel logoDer = new JLabel();
+        try {
+            ImageIcon icon = new ImageIcon("img/fragua.png");
+            if (icon.getIconWidth() > 0 && icon.getIconHeight() > 0) {
+                int h = 70;
+                int w = (int) (icon.getIconWidth() * (h / (double) icon.getIconHeight()));
+                Image scaled = icon.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH);
+                logoDer.setIcon(new ImageIcon(scaled));
+            }
+        } catch (Exception ignore) {}
+        logoDer.setHorizontalAlignment(JLabel.RIGHT);
 
-        header.add(logo, BorderLayout.WEST);
-        header.add(title, BorderLayout.CENTER);
-        header.add(aviso, BorderLayout.EAST);
+        // === Espacio central (para carrusel de anuncios más adelante) ===
+        JPanel anuncioPanel = new JPanel(new BorderLayout());
+        anuncioPanel.setBackground(Color.WHITE);
+        anuncioPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK)); // opcional para ver el área
+        JLabel placeholder = new JLabel("Carrusel de anuncios aquí", JLabel.CENTER);
+        placeholder.setFont(new Font("Verdana", Font.PLAIN, 14));
+        anuncioPanel.add(placeholder, BorderLayout.CENTER);
+
+        // === Añadir al header ===
+        header.add(logoIzq, BorderLayout.WEST);
+        header.add(anuncioPanel, BorderLayout.CENTER);
+        header.add(logoDer, BorderLayout.EAST);
+
         return header;
     }
 }
