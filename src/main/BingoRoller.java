@@ -40,6 +40,7 @@ public class BingoRoller extends JFrame {
     JTextArea numerosLog;
     JScrollPane numerosScroll;
     java.util.List<String> dibujarNumlog = new java.util.ArrayList<String>();
+
     int numLog_cols = 5;
     int col_width = 12;
     boolean llenadoXColumna = false;
@@ -149,36 +150,60 @@ public class BingoRoller extends JFrame {
         resetButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
         resetButton.setBounds(145, 380, 140, 40);
         resetButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
+                String nota = (campoFinalizacion.getText() == null) ? "" : campoFinalizacion.getText().trim();
+                if (nota.isEmpty()) {
+                    JOptionPane.showMessageDialog(
+                            BingoRoller.this,
+                            "Debes escribir un comentario en la caja de notas antes de reiniciar el juego.",
+                            "Falta comentario",
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                    return;
+                }
 
-                int input = JOptionPane.showConfirmDialog(null, "Nuevo juego");
+
+                int input = JOptionPane.showConfirmDialog(BingoRoller.this, "Nuevo juego");
                 // 0=yes, 1=no, 2=cancel
 
                 if (input == 0) {
+                    registrarJuegoActual(
+                            miniCard1,  ganadorF1,
+                            miniCard2,  ganadorF2,
+                            miniCard3,  ganadorF3,
+                            miniCard4,  ganadorF4,
+                            nota
+                    );
 
-                    numberLabel.stream().forEach(n -> n.setBackground(Color.WHITE));
+                    numberLabel.forEach(n -> n.setBackground(Color.WHITE));
                     rolledNumbers.clear();
                     dibujarNumlog.clear();
                     numerosLog.setText("");
+
+
                     miniCard1.resetCard();
                     miniCard2.resetCard();
                     miniCard3.resetCard();
                     miniCard4.resetCard();
-                    ganadorF1.setText(""); ganadorF1.setEditable(true); ganadorF1.setEnabled(true);ganadorF1.setBackground(Color.WHITE);
-                    ganadorF2.setText(""); ganadorF2.setEditable(true); ganadorF2.setEnabled(true);ganadorF2.setBackground(Color.WHITE);
-                    ganadorF3.setText(""); ganadorF3.setEditable(true); ganadorF3.setEnabled(true);ganadorF3.setBackground(Color.WHITE);
-                    ganadorF4.setText(""); ganadorF4.setEditable(true); ganadorF4.setEnabled(true);ganadorF4.setBackground(Color.WHITE);
+
+                    ganadorF1.setText(""); ganadorF1.setEditable(true); ganadorF1.setEnabled(true); ganadorF1.setBackground(Color.WHITE);
+                    ganadorF2.setText(""); ganadorF2.setEditable(true); ganadorF2.setEnabled(true); ganadorF2.setBackground(Color.WHITE);
+                    ganadorF3.setText(""); ganadorF3.setEditable(true); ganadorF3.setEnabled(true); ganadorF3.setBackground(Color.WHITE);
+                    ganadorF4.setText(""); ganadorF4.setEditable(true); ganadorF4.setEnabled(true); ganadorF4.setBackground(Color.WHITE);
+
+
+                    campoFinalizacion.setText("");
+
+
+                    drawButton.setText("Proximo numero");
+                    drawButton.setEnabled(true);
+                    autoButton.setText("Automatico");
+                    autoButton.setEnabled(true);
                 }
-
-                drawButton.setText("Proximo numero");
-                drawButton.setEnabled(true);
-                autoButton.setText("Automatico");
-                autoButton.setEnabled(true);
-
             }
         });
+
 
         autoButton.setFocusable(false);
         autoButton.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
@@ -195,6 +220,7 @@ public class BingoRoller extends JFrame {
         speedSlider.setPaintTrack(true);
         speedSlider.setPaintLabels(true);
         speedSlider.addChangeListener(e -> setAutoDrawSpeed());
+
         // slider label
         speedLabel.setText("Velocidad");
         speedLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -216,33 +242,29 @@ public class BingoRoller extends JFrame {
         ganadorF3.setBounds(miniCard3.getX(), miniCard3.getY() + miniCard3.getHeight() + 2, miniCard3.getWidth(), 22);
         ganadorF4.setBounds(miniCard4.getX(), miniCard4.getY() + miniCard4.getHeight() + 2, miniCard4.getWidth(), 22);
 
-        /*bloquear ganadores*/
-        ganadorF1.addActionListener(ev -> bloquearGanador(miniCard1, ganadorF1));
-        ganadorF2.addActionListener(ev -> bloquearGanador(miniCard2, ganadorF2));
-        ganadorF3.addActionListener(ev -> bloquearGanador(miniCard3, ganadorF3));
-        ganadorF4.addActionListener(ev -> bloquearGanador(miniCard4, ganadorF4));
+        /*bloquear + log inmediato por cada ganador*/
+        ganadorF1.addActionListener(ev -> {
+            addWinnerLine(miniCard1, ganadorF1);
+            bloquearGanador(miniCard1, ganadorF1);
+        });
+        ganadorF2.addActionListener(ev -> {
+            addWinnerLine(miniCard2, ganadorF2);
+            bloquearGanador(miniCard2, ganadorF2);
+        });
+        ganadorF3.addActionListener(ev -> {
+            addWinnerLine(miniCard3, ganadorF3);
+            bloquearGanador(miniCard3, ganadorF3);
+        });
+        ganadorF4.addActionListener(ev -> {
+            addWinnerLine(miniCard4, ganadorF4);
+            bloquearGanador(miniCard4, ganadorF4);
+        });
 
-        /*
-        ganadorF1.setBounds(910,  txtGanadoresHeight  +23 + 6, txtGanadoresWidth +1, 24);
-        ganadorF2.setBounds(1010, txtGanadoresHeight  +23 + 6, txtGanadoresWidth +1, 24);
-        ganadorF3.setBounds(910,  txtGanadoresHeight +175 + 6, txtGanadoresWidth +1, 24);
-        ganadorF4.setBounds(1010, txtGanadoresHeight +175 + 6, txtGanadoresWidth +1, 24);
-        */
         campoFinalizacion = new JTextField();
         campoFinalizacion.setToolTipText("escribe nota y presiona enter paa registrar gandores");
 
         campoFinalizacion.setBounds(910,325,185,28);
 
-        campoFinalizacion.addActionListener( e-> {
-            registrarJuegoActual(
-                    miniCard1,  ganadorF1,
-                    miniCard2, ganadorF2,
-                    miniCard3, ganadorF3,
-                    miniCard4, ganadorF4,
-                    campoFinalizacion.getText().trim()
-            );
-            campoFinalizacion.setText("");
-        });
         //log de numeros cantados
         numerosLog = new JTextArea();
         numerosLog.setEditable(false);
@@ -291,24 +313,13 @@ public class BingoRoller extends JFrame {
             MiniBingoCard c1, JTextField f1,
             MiniBingoCard c2, JTextField f2,
             MiniBingoCard c3, JTextField f3,
-            MiniBingoCard c4, JTextField f4, String note){
-        addWinnerLine(c1, f1);
-        addWinnerLine(c2, f2);
-        addWinnerLine(c3, f3);
-        addWinnerLine(c4, f4);
+            MiniBingoCard c4, JTextField f4, String note) {
 
-        if(!note.isEmpty()){
-            ganadoresLog.append("nota: "+ note +"\n");
+        if (!note.isEmpty()) {
+            ganadoresLog.append("nota: " + note + "\n");
         }
         ganadoresLog.append("\n");
 
-        //Limpia para preparar el siguiente juego
-        f1.setText("");
-        f2.setText("");
-        f3.setText("");
-        f4.setText("");
-
-        //Prepara siguiente encabezado
         numJuego++;
         appendGameHeader();
     }

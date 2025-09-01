@@ -90,6 +90,26 @@ public class MiniBingoCard extends JPanel implements ActionListener {
             b.setEnabled(on);
         }
     }
+    public void bloquearGanador() {
+        bloquear = true;
+        setInteractive(false);
+        for (JButton b : node) {
+            if (b.getBackground().equals(Color.RED)) {
+                b.setBackground(new Color(100, 149, 237)); // azul
+            }
+        }
+        this.setBorder(BorderFactory.createLineBorder(new Color(100, 149, 237), 2));
+    }
+
+    public void resetCard() {
+        bloquear = false;
+        setInteractive(true);
+        clearNodes();
+        if (patternComboBox != null) {
+            patternComboBox.setSelectedIndex(0);
+        }
+        this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
