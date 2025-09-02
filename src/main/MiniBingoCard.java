@@ -6,19 +6,20 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public class MiniBingoCard extends JPanel implements ActionListener {
 
-    private static final long serialVersionUID = 1L ;
+    private static final long serialVersionUID = 1L;
+
+    private static final int PADDING   = 1;
+    private static final int COMBO_MIN = 22;  // alto mínimo del combo
+    private static final int COMBO_MAX = 30;  // alto máximo del combo
+
     boolean bloquear = false;
     ArrayList<JButton> node = new ArrayList<>();
     Map<String, Pattern> pattern = new HashMap<>();
-    JPanel cardPanel, comboBoxPanel;
+    JPanel cardPanel;
     JComboBox<String> patternComboBox;
 
     MiniBingoCard(int x, int y) {
@@ -26,7 +27,7 @@ public class MiniBingoCard extends JPanel implements ActionListener {
         this.setLayout(null);
         this.setBounds(x, y, (int) (120 *0.7) , (int)(170 * 0.7));
         this.setBackground(Color.GRAY);
-        this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
         String[] str = { "Personalizado", "Diagonal","Equis", "Horizontal", "Vertical", "Esquina", "Diamante interno",
                 "Diamante externo", "Completa" };
@@ -42,29 +43,44 @@ public class MiniBingoCard extends JPanel implements ActionListener {
         pattern.put("Completa", Pattern.FULL);
 
         patternComboBox = new JComboBox<>(str);
-        patternComboBox.setBounds(0, 0, (int) (120*0.70), 20);
         patternComboBox.addActionListener(this);
         patternComboBox.setToolTipText("Patrón");
         patternComboBox.setFont(new java.awt.Font("Verdana", Font.PLAIN, 10));
 
-        cardPanel = new JPanel();
-        cardPanel.setLayout(new GridLayout(5, 5, 1, 1));
-        cardPanel.setBounds(0, (int)(30 * 0.7), (int) (120*0.70), (int) (140*0.7));
+        cardPanel = new JPanel(new GridLayout(5, 5, 1, 1));
         cardPanel.setBackground(Color.GRAY);
-        cardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
         for (int i = 0; i < 25; i++) {
-
-            node.add(new JButton());
-            node.get(i).setBackground(Color.WHITE);
-            cardPanel.add(node.get(i));
-            node.get(i).addActionListener(this);
-
+            JButton b = new JButton();
+            b.setBackground(Color.WHITE);
+            b.addActionListener(this);
+            node.add(b);
+            cardPanel.add(b);
         }
 
         this.add(patternComboBox);
         this.add(cardPanel);
+    }
 
+    @Override
+    public void doLayout() {
+        int w = getWidth();
+        int h = getHeight();
+
+
+        int comboH = Math.max(COMBO_MIN, Math.min(COMBO_MAX, h / 4));
+        int x = PADDING;
+        int y = PADDING;
+        int innerW = Math.max(0, w - 2 * PADDING);
+        int innerH = Math.max(0, h - 3 * PADDING - comboH);
+
+        patternComboBox.setBounds(x, y, innerW, comboH);
+
+        int side = Math.min(innerW, innerH);
+        int gx = x + (innerW - side) / 2;
+        int gy = y + comboH + PADDING + (innerH - side) / 2;
+
+        cardPanel.setBounds(gx, gy, side, side);
     }
 
     void clearNodes() {
@@ -148,9 +164,7 @@ public class MiniBingoCard extends JPanel implements ActionListener {
                 break;
             case LINE_ACROSS:
                 clearNodes();
-                for (int i = 10; i < 15; i++) {
-                    node.get(i).setBackground(Color.RED);
-                }
+                for (int i = 10; i < 15; i++) node.get(i).setBackground(Color.RED);
                 break;
             case LINE_DOWN:
                 clearNodes();
