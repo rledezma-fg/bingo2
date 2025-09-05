@@ -18,7 +18,7 @@ public class BingoRoller extends JFrame {
     MiniBingoCard miniCard3 = new MiniBingoCard(885, 152);
     MiniBingoCard miniCard4 = new MiniBingoCard(985, 152);
 
-    //para botones por minicard
+    //********* para botones por minicard **********
     JTextField ganadorF1, ganadorF2, ganadorF3, ganadorF4;
     JTextField campoFinalizacion;
 
@@ -55,7 +55,7 @@ public class BingoRoller extends JFrame {
     Object lock = new Object();
 
     JButton drawButton = new JButton("Proximo numero");
-    JButton resetButton = new JButton("Reiniciar/Nuevo juego");
+    JButton resetButton = new JButton("Nuevo juego");
     JButton autoButton = new JButton("Automatico");
     JSlider speedSlider = new JSlider(1, 6, 3);
     JLabel speedLabel = new JLabel();
@@ -64,14 +64,14 @@ public class BingoRoller extends JFrame {
 
     int autoDrawSpeed = 3;
 
-    //para poder escalar
+    // ***************************************************************para poder escalar
     private JPanel center;
     private JPanel playfield;
     private static final int BASE_W = 1069;
     private static final int BASE_H = 434;
 
-    private static final int MAX_W  = 1200;
-    private static final int MAX_H  = 550;
+    private static final int MAX_W  = 1200;                           //<--- Maximo aancho escalada para playfield
+    private static final int MAX_H  = 550;                           //<--- Maxima altura escalada para playfield
 
     private final java.util.LinkedHashMap<Component, BaseMeta> baseMap = new java.util.LinkedHashMap<>();
 
@@ -87,21 +87,20 @@ public class BingoRoller extends JFrame {
     }
 
     BingoRoller() {
-/*tamaño general*/
+        // ******************************************************************tamaño general
         this.setTitle("Bingo FG");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(1100, 650);
+        this.setSize(1100, 650);                                // <-- tamaño inicial
         this.setMinimumSize(new Dimension(1100, 650));          // <-- tamaño mínimo
         this.setLocationRelativeTo(null);
         //this.setResizable(false);
-        this.setLayout(new BorderLayout());                     // <-- BorderLayout en el frame
+        this.setLayout(new BorderLayout());
         this.getContentPane().setBackground(color.WHITE);
 
-        // ===== Header arriba =====
+        // ****************************************************************** header
         JPanel header = buildHeaderPanel();
         this.add(header, BorderLayout.NORTH);
 
-        // ===== Centro con GridBag para centrar el playfield =====
         center = new JPanel(new GridBagLayout());
         center.setBackground(color.WHITE);
         this.add(center, BorderLayout.CENTER);
@@ -114,7 +113,7 @@ public class BingoRoller extends JFrame {
         letterPanel.setLayout(new GridLayout(5, 1, 3, 3));
         letterPanel.setBounds(0, 0, 50, 285);
         letterPanel.setBackground(Color.WHITE);
-
+        // ****************************************************************** letras de bingo
         String bingo = "BINGO";
         for (int i = 0; i < 5; i++) {
             letterLabel.add(new JLabel("" + bingo.charAt(i)));
@@ -144,7 +143,7 @@ public class BingoRoller extends JFrame {
 
         newRollPanel = new RolledNumberPanel(' ', 0, 0, 305);
 
-        // ************* buttons *************
+        // **************************************************************************** buttons
         drawButton.setFocusable(false);
         drawButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
         drawButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -174,9 +173,9 @@ public class BingoRoller extends JFrame {
         });
 
         resetButton.setFocusable(false);
-        resetButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 5));
+        resetButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 4));
         resetButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        resetButton.setBounds(120, 355, 140, 40);
+        resetButton.setBounds(120, 355, 140, 50);
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -288,21 +287,19 @@ public class BingoRoller extends JFrame {
         campoFinalizacion.setToolTipText("escribe nota y presiona enter paa registrar gandores");
         campoFinalizacion.setBounds(885,300,185,28);
 
-        //log de numeros cantados
-        numerosLog = new JTextArea();
-        numerosLog.setEditable(false);
-        numerosLog.setFont(new Font("Courier new", Font.PLAIN, 12));
-        numerosScroll = new JScrollPane(numerosLog);
+        // ====== log de numeros cantados (usando NumerosLogPanel)
+        NumerosLogPanel numerosPanel = new NumerosLogPanel();
+        numerosLog = numerosPanel.getArea();
+        numerosScroll = numerosPanel.getScroll();
         numerosScroll.setBounds(440, 300, 435, 135);
 
-        //log de ganadores
-        ganadoresLog = new JTextArea();
-        ganadoresLog.setEditable(false);
-        ganadoresLog.setFont(new Font("Verdana", Font.PLAIN, 12));
+        // ====== log de ganadores (usando GanadoresPanel)
+        GanadoresPanel ganPanel = new GanadoresPanel();
+        ganadoresLog = ganPanel.getArea();
         DefaultCaret caret = (DefaultCaret) ganadoresLog.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-        ganadoresScroll = new JScrollPane(ganadoresLog);
-        ganadoresScroll.setBounds(885,txtGanadoresHeight+ 220  , 185, 100 );
+        ganadoresScroll = ganPanel.getScroll();
+        ganadoresScroll.setBounds(885, txtGanadoresHeight + 220, 185, 100);
 
         playfield.add(letterPanel);
         playfield.add(numberPanel);
@@ -323,7 +320,6 @@ public class BingoRoller extends JFrame {
         playfield.add(campoFinalizacion);
         playfield.add(ganadoresScroll);
         playfield.add(numerosScroll);
-        playfield.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         rememberBase(letterPanel, 25f);
         rememberBase(numberPanel, null);
@@ -345,21 +341,18 @@ public class BingoRoller extends JFrame {
         rememberBase(ganadoresScroll, null);
         rememberBase(numerosScroll, null);
 
-// para fijar el redimensinado
         this.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentResized(java.awt.event.ComponentEvent e) {
                 escalarPlayfield();
             }
         });
-// 1ª pasada para dejar todo
-        escalarPlayfield();
 
-        // === centrar el playfield en el centro
+        escalarPlayfield();
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; gbc.gridy = 0;
         gbc.weightx = 1.0;
-        gbc.weighty = 2.0;              // <- permite que el anchor tenga efecto vertical
+        gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.NORTH;
         center.add(playfield, gbc);
 
@@ -385,7 +378,7 @@ public class BingoRoller extends JFrame {
         appendGameHeader();
     }
 
-    private void addWinnerLine( MiniBingoCard card, JTextField field ){
+    private void agregarGanador( MiniBingoCard card, JTextField field ){
         String name = field.getText().trim();
         if(name.isEmpty()) return;
 
@@ -428,10 +421,8 @@ public class BingoRoller extends JFrame {
     private void bloquearGanador(MiniBingoCard card, JTextField nom){
         String nombre = nom.getText().trim();
         if (nombre.isEmpty()) return;
-
-        // si ya lo registré antes, no lo vuelvo a escribir
-        if (!isLogged(nom)) {
-            addWinnerLine(card, nom);
+        if (!isLogged(nom)) { // si ya lo registré antes, no lo vuelvo a escribir
+            agregarGanador(card, nom);
             setLogged(nom, true);
         }
 
@@ -445,7 +436,7 @@ public class BingoRoller extends JFrame {
     private void ganadorSinConfirmar(MiniBingoCard card, JTextField field) {
         String name = (field.getText() == null) ? "" : field.getText().trim();
         if (!name.isEmpty() && !isLogged(field)) {
-            addWinnerLine(card, field);
+            agregarGanador(card, field);
             setLogged(field, true);
         }
     }
@@ -479,7 +470,7 @@ public class BingoRoller extends JFrame {
                     else
                         n.setBackground(Color.WHITE);
                     try {
-                        Thread.sleep(200);
+                        Thread.sleep(300);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -527,7 +518,7 @@ public class BingoRoller extends JFrame {
 
     private void sleep(long sec) {
         try {
-            Thread.sleep(sec * 500);
+            Thread.sleep(sec * 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -542,7 +533,7 @@ public class BingoRoller extends JFrame {
             newRollPanel.setNewNumber(number);
 
             try {
-                Thread.sleep(10);
+                Thread.sleep(120);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -599,12 +590,12 @@ public class BingoRoller extends JFrame {
     }
 
     //******************************************************************
-    //****************************************************************** para manejar el escalado
+    //****************************************************************** Playfield
     private void escalarPlayfield() {
         if (center == null || playfield == null) return;
 
         // Tamaño disponible en el CENTER
-        int anchoDisponible = Math.max(0, center.getWidth() - 50); // margen opcional de 50 px
+        int anchoDisponible = Math.max(0, center.getWidth() - 50);
         int altoDisponible  = center.getHeight();
         if (anchoDisponible <= 0 || altoDisponible <= 0) return;
 
@@ -634,15 +625,12 @@ public class BingoRoller extends JFrame {
         int anchoEscalado = sc(BASE_W, s);
         int altoEscalado  = sc(BASE_H, s);
 
-        // Alto sobrante disponible (capado al MAX_H)
         int altoCap = Math.min(altoDisponible, MAX_H);
         int extraH  = Math.max(0, altoCap - altoEscalado);
 
-        // Repartir el extra entre los dos scrolls (50/50 aquí; ajusta si quieres)
         int extraNumeros   = (int) Math.round(extraH * 0.50);
         int extraGanadores = extraH - extraNumeros;
 
-        // Crecer hacia abajo (solo altura)
         if (numerosScroll != null) {
             Rectangle rb = baseMap.get(numerosScroll).r;
             int newH = sc(rb.height, s) + extraNumeros;
@@ -654,20 +642,17 @@ public class BingoRoller extends JFrame {
             ganadoresScroll.setBounds(sc(rb.x, s), sc(rb.y, s), sc(rb.width, s), newH);
         }
 
-        // Altura total final que ocupa el playfield
         int alturaTotalPlayfield = altoEscalado + extraH;
 
-        // Limitar tamaño final del playfield por los topes máximos
         int finalW = Math.min(anchoEscalado,         MAX_W);
         int finalH = Math.min(alturaTotalPlayfield,  MAX_H);
         playfield.setPreferredSize(new Dimension(finalW, finalH));
 
-        // ¿Llegamos al máximo?
+
         boolean atMaxW = (finalW >= MAX_W);
         boolean atMaxH = (finalH >= MAX_H);
         boolean atMax  = atMaxW || atMaxH;
 
-        // Reaplicar constraints para controlar el hueco
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; gbc.gridy = 0;
         gbc.weightx = 1.0;
@@ -687,50 +672,6 @@ public class BingoRoller extends JFrame {
     // ***************************************************************************************************
     // *************************************************************************************************** HEADER
     private JPanel buildHeaderPanel() {
-        JPanel header = new JPanel(new BorderLayout());
-        header.setBorder(BorderFactory.createEmptyBorder(6, 10, 6, 10));
-        header.setBackground(Color.WHITE);
-
-        // inicio con espacio para el logo izquierdo
-        JLabel logoIzq = new JLabel();
-        try {
-            ImageIcon icon = new ImageIcon("img/fg logo.png");
-            if (icon.getIconWidth() > 0 && icon.getIconHeight() > 0) {
-                int h = 160;
-                int w = (int) (icon.getIconWidth() * (h / (double) icon.getIconHeight()));
-                Image scaled = icon.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH);
-                logoIzq.setIcon(new ImageIcon(scaled));
-            }
-        } catch (Exception ignore) {}
-        logoIzq.setHorizontalAlignment(JLabel.LEFT);
-        logoIzq.setVerticalAlignment(JLabel.CENTER);
-
-        // inicio con espacio para el logo derecho
-        JLabel logoDer = new JLabel();
-        try {
-            ImageIcon icon = new ImageIcon("img/fragua.png");
-            if (icon.getIconWidth() > 0 && icon.getIconHeight() > 0) {
-                int h = 70;
-                int w = (int) (icon.getIconWidth() * (h / (double) icon.getIconHeight()));
-                Image scaled = icon.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH);
-                logoDer.setIcon(new ImageIcon(scaled));
-            }
-        } catch (Exception ignore) {}
-        logoDer.setHorizontalAlignment(JLabel.RIGHT);
-        logoDer.setVerticalAlignment(JLabel.CENTER);
-
-        // === Espacio central (para carrusel de anuncios )
-        JPanel anuncioPanel = new JPanel(new BorderLayout());
-        anuncioPanel.setBackground(Color.WHITE);
-        anuncioPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        JLabel placeholder = new JLabel("Carrusel de anuncios aquí", JLabel.CENTER);
-//        placeholder.setFont(new Font("Verdana", Font.PLAIN, 14));
-        anuncioPanel.add(placeholder, BorderLayout.CENTER);
-
-        header.add(logoIzq, BorderLayout.WEST);
-        header.add(anuncioPanel, BorderLayout.CENTER);
-        header.add(logoDer, BorderLayout.EAST);
-
-        return header;
+        return HeaderSeccion.create();
     }
 }

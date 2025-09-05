@@ -13,8 +13,8 @@ public class MiniBingoCard extends JPanel implements ActionListener {
     private static final long serialVersionUID = 1L;
 
     private static final int PADDING   = 1;
-    private static final int COMBO_MIN = 22;  // alto mínimo del combo
-    private static final int COMBO_MAX = 30;  // alto máximo del combo
+    private static final int COMBO_MIN = 22;
+    private static final int COMBO_MAX = 30;
 
     boolean bloquear = false;
     ArrayList<JButton> node = new ArrayList<>();
