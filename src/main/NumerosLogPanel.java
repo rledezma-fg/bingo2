@@ -2,11 +2,17 @@ package main;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class NumerosLogPanel {
     private final JTextArea area;
     private final JScrollPane scroll;
+
+    private final List<String> items = new ArrayList<>();
+    private int cols = 5;
+    private int colWidth = 12;
+    private boolean porColumnas = false;
 
     public NumerosLogPanel(){
         area = new JTextArea();
@@ -18,6 +24,25 @@ public class NumerosLogPanel {
     public JTextArea getArea(){ return area; }
     public JScrollPane getScroll(){ return scroll; }
 
+    // para llenar por filas o columnas, solo pasar parametro booleano en parametros
+    public void setLayoutConfig(int cols, int colWidth, boolean porColumnas) {
+        this.cols = Math.max(1, cols);
+        this.colWidth = Math.max(1, colWidth);
+        this.porColumnas = porColumnas;
+        render();
+    }
+
+    // agregar número al log
+    public void addNumero(char letter, int number) {
+        items.add(String.format("Num(%s%d)", letter, number));
+        render();
+    }
+
+    // limpiar log
+    public void clear() {
+        items.clear();
+        render();
+    }
 
     public static String format(List<String> items, int cols, int colWidth, boolean porColumnas){
         int n = items.size();
@@ -44,5 +69,12 @@ public class NumerosLogPanel {
             }
         }
         return sb.toString();
+    }
+
+    // --- render interno ---
+    private void render() {
+        String text = format(items, cols, colWidth, porColumnas);
+        area.setText(text);
+        area.setCaretPosition(area.getDocument().getLength());
     }
 }
