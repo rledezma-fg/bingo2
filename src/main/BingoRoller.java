@@ -86,6 +86,10 @@ public class BingoRoller extends JFrame {
         baseMap.put(c, new BaseMeta(c.getBounds(), baseFontPt));
     }
 
+     // para el header
+    private JPanel header;
+    private JPanel carruselPanel;
+
     BingoRoller() {
         // ******************************************************************tamaño general
         this.setTitle("Bingo FG");
@@ -98,8 +102,9 @@ public class BingoRoller extends JFrame {
         this.getContentPane().setBackground(color.WHITE);
 
         // ****************************************************************** header
-        JPanel header = buildHeaderPanel();
+        header = buildHeaderPanel();
         this.add(header, BorderLayout.NORTH);
+        carruselPanel = HeaderSeccion.getCarrusel(header);
 
         center = new JPanel(new GridBagLayout());
         center.setBackground(color.WHITE);
@@ -345,6 +350,19 @@ public class BingoRoller extends JFrame {
             @Override
             public void componentResized(java.awt.event.ComponentEvent e) {
                 escalarPlayfield();
+                // aqui puedo cambiar el escalado de espacio de carrusel
+                if (carruselPanel != null) {
+                    int contH = getContentPane().getHeight();
+                    int playH = (playfield != null && playfield.getPreferredSize() != null)
+                            ? playfield.getPreferredSize().height : 0;
+
+                    int margen = 20; // respiración
+                    int hDeseado = Math.max(140, contH - playH - margen); // con 140 se ve bonito, puedo definirle un maximo como 320
+                    carruselPanel.setPreferredSize(new Dimension(10, hDeseado));
+
+                    header.revalidate();
+                    header.repaint();
+                }
             }
         });
 
