@@ -23,9 +23,10 @@
         private float paso = 0.10f;
         private Image imagenAnterior = null;
 
-        // Controles superpuestos
+        // Para cintrolar manual con botones
         private final JButton btnAnterior = new JButton("‹");
         private final JButton btnSiguiente = new JButton("›");
+
 
         public PanelCarrusel(List<String> rutasOUrls) {
             setLayout(null);
@@ -48,7 +49,7 @@
             temporizadorAuto = new Timer(retrasoMs, e -> mostrarSiguiente());
             if (autoReproducir && diapositivas.size() > 1) temporizadorAuto.start();
 
-            // Fade ~60 FPS
+            // Temporizador entre avance automtico
             temporizadorFade = new Timer(16, e -> {
                 alfa += paso;
                 if (alfa >= 1f) { alfa = 1f; temporizadorFade.stop(); }
@@ -68,7 +69,7 @@
             });
         }
 
-
+        //Cargar imagenes si me dicen que las tienen en enlace
         public final void setImagenes(List<String> rutasOUrls){
             diapositivas.clear();
             for (String s : rutasOUrls){
@@ -84,10 +85,11 @@
         }
 
         public void establecerRetraso(int ms){
-            retrasoMs = Math.max(1000, ms);
+            retrasoMs = Math.max(10000, ms);
             temporizadorAuto.setDelay(retrasoMs);
         }
 
+        //por si me pasan mas de una imagen que funcione como carrusel
         public void establecerAutoReproducir(boolean on){
             autoReproducir = on;
             if (on && diapositivas.size() > 1) temporizadorAuto.start(); else temporizadorAuto.stop();
@@ -125,6 +127,7 @@
             btnSiguiente.setBounds(getWidth()-w-10, y, w, h);
         }
 
+        //Para usar los botones bien
         private void mostrarAnterior(){
             if (diapositivas.isEmpty()) return;
             int siguiente = (indice - 1 + diapositivas.size()) % diapositivas.size();
@@ -135,6 +138,7 @@
             int siguiente = (indice + 1) % diapositivas.size();
             iniciarFadeHacia(siguiente);
         }
+
         private void iniciarFadeHacia(int nuevoIndice){
             if (nuevoIndice == indice) return;
             imagenAnterior = imagenActual();
@@ -143,11 +147,12 @@
             if (!temporizadorFade.isRunning()) temporizadorFade.start();
             repaint();
         }
+
         private Image imagenActual(){
             return diapositivas.isEmpty() ? null : diapositivas.get(indice);
         }
 
-        // Escalado manteniendo aspecto (modo "contain" para que no recorte)
+        // Escalado manteniendo aspecto (modo "contain" para que no me recorte las imagenes que suben en caso de que sean de tamaño distinto todas)
         private static Dimension ajustarAspecto(int pw, int ph, int iw, int ih){
             double pr = pw / (double) ph;
             double ir = iw / (double) ih;
@@ -191,6 +196,7 @@
             g2.dispose();
         }
 
+        // para dibujar los puntitos dependiendo la cantidad de imagenes
         private void dibujarPuntos(Graphics2D g2){
             if (diapositivas.size() <= 1) return;
             int punto = 8, gap = 10;

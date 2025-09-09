@@ -81,7 +81,6 @@ public class BingoRoller extends JFrame {
         baseMap.put(c, new BaseMeta(c.getBounds(), baseFontPt));
     }
 
-    // --- referencias para header/carrusel (si ya aplicaste el cambio anterior)
     private JPanel header;
     private JPanel carruselPanel;
 
@@ -98,7 +97,7 @@ public class BingoRoller extends JFrame {
         // ****************************************************************** header
         header = buildHeaderPanel();
         this.add(header, BorderLayout.NORTH);
-        carruselPanel = HeaderSeccion.getCarrusel(header); // si usas el carrusel adaptable
+        carruselPanel = HeaderSeccion.getCarrusel(header);
 
         center = new JPanel(new GridBagLayout());
         center.setBackground(color.WHITE);
@@ -242,7 +241,7 @@ public class BingoRoller extends JFrame {
         //Para posiciones constantes para minicards y fields de ganador
         int txtGanadoresHeight = (int)(165 * 0.7);
 
-        //Para los campos para ganadores por card ******
+        //Para los campos para ganadores por card
         ganadorF1 = new JTextField();
         ganadorF2 = new JTextField();
         ganadorF3 = new JTextField();
@@ -269,14 +268,14 @@ public class BingoRoller extends JFrame {
         campoFinalizacion.setToolTipText("escribe nota y presiona enter paa registrar gandores");
         campoFinalizacion.setBounds(885,300,185,28);
 
-        // ====== log de numeros cantados
+        // log de numeros cantados
         NumerosLogPanel numerosPanel = new NumerosLogPanel();
         numerosPanel.setLayoutConfig(5, 12, false); // cols, ancho columna, porColumnas=false
         numerosLog = numerosPanel.getArea();
         numerosScroll = numerosPanel.getScroll();
         numerosScroll.setBounds(440, 300, 435, 135);
 
-        // ====== log de ganadores
+        // log de ganadores
         GanadoresPanel ganPanel = new GanadoresPanel();
         ganadoresLog = ganPanel.getArea();
         DefaultCaret caret = (DefaultCaret) ganadoresLog.getCaret();
@@ -339,7 +338,7 @@ public class BingoRoller extends JFrame {
                     int playH = (playfield != null && playfield.getPreferredSize() != null)
                             ? playfield.getPreferredSize().height : 0;
 
-                    int margen = 20;
+                    int margen = 30;
                     int hDeseado = Math.max(140, contH - playH - margen);
                     carruselPanel.setPreferredSize(new Dimension(10, hDeseado));
                     header.revalidate();
@@ -385,13 +384,14 @@ public class BingoRoller extends JFrame {
             setLogged(nom, true);
         }
 
-        // bloquea UI
+        // bloquear interaccion de minicards cuando alguien gana
         card.bloquearGanador();
         nom.setEditable(false);
         nom.setEnabled(false);
         nom.setBackground(new Color(235,235,235));
     }
 
+    // para cuando no confirman ganador, pero si escriben algo
     private void ganadorPendiente() {
         ganPanel.registrarGanadoresPendientes(
                 miniCard1, ganadorF1.getText(),
@@ -442,8 +442,10 @@ public class BingoRoller extends JFrame {
         }
     }
 
+    //configuracion de velocidad del autospeed
     private void setAutoDrawSpeed() { autoDrawSpeed = 6 - (speedSlider.getValue()); }
 
+    //para permitir pausar/reanudar con autospeed
     private void autoButtonPressed() {
         if (!auto.isAlive()) auto.start();
 
@@ -462,6 +464,7 @@ public class BingoRoller extends JFrame {
         synchronized (lock) { lock.notifyAll(); }
     }
 
+    //para cuando el autospeed se desactiva
     private void allowPause() {
         synchronized (lock) {
             while (paused) {
@@ -470,11 +473,12 @@ public class BingoRoller extends JFrame {
         }
     }
 
+    //para tiempo de espera entre activacion y activacion
     private void sleep(long sec) {
-        try { Thread.sleep(sec * 1000); } catch (InterruptedException e) { e.printStackTrace(); }
+        try { Thread.sleep(sec * 100); } catch (InterruptedException e) { e.printStackTrace(); }
     }
 
-    // random animation visual (puedes moverla al RolledNumberPanel si prefieres)
+    // todo: cambiar de archivo para seguir solid
     private void animateRandom() {
         for (int i = 0; i < 10; i++) {
             int number = rand.nextInt(1, 76);
@@ -559,6 +563,8 @@ public class BingoRoller extends JFrame {
 
         center.remove(playfield);
         center.add(playfield, gbc);
+
+        System.out.println(new java.io.File("img/carrusel").getAbsolutePath());//test
 
         playfield.revalidate();
         center.revalidate();

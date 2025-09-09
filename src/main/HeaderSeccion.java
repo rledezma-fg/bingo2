@@ -48,23 +48,16 @@ public final class HeaderSeccion {
         // ---------- Panel central: Carrusel ----------
         JPanel panelCarruselContenedor = new JPanel(new BorderLayout());
         panelCarruselContenedor.setBackground(Color.WHITE);
-        panelCarruselContenedor.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        // marca para que BingoRoller pueda encontrarlo y ajustar altura
         panelCarruselContenedor.putClientProperty("isCarrusel", Boolean.TRUE);
 
-        // Lista de diapositivas (rutas locales o URLs). Cambia por tus imágenes.
-        List<String> diapositivas = Arrays.asList(
-                "img/carrusel1.jpg",
-                "img/carrusel2.jpg",
-                "img/carrusel3.jpg"
-        );
+        java.util.List<String> diapositivas = imagenes("img/carrusel");
         PanelCarrusel carrusel = new PanelCarrusel(diapositivas);
         carrusel.establecerRetraso(3500);         // ms entre slides
         carrusel.establecerAutoReproducir(true);  // autoplay
 
         panelCarruselContenedor.add(carrusel, BorderLayout.CENTER);
 
-        // ---------- Ensamble del header ----------
+        // Asi se va a distribuir los elementos en header
         header.add(logoIzq, BorderLayout.WEST);
         header.add(panelCarruselContenedor, BorderLayout.CENTER);
         header.add(logoDer, BorderLayout.EAST);
@@ -72,7 +65,23 @@ public final class HeaderSeccion {
         return header;
     }
 
-    //------------------ Devuelve el panel contenedor del carrusel dentro del header.
+    //para meter diferentes tipos de imagenes
+    private static java.util.List<String> imagenes (String carpeta){
+     java.util.List<String> r = new java.util.ArrayList<>();
+        try (var ds = java.nio.file.Files.newDirectoryStream(java.nio.file.Paths.get(carpeta))) {
+            for (var p : ds) {
+                if (java.nio.file.Files.isRegularFile(p)) {
+                    String n = p.getFileName().toString().toLowerCase();
+                    if (n.endsWith(".png") || n.endsWith(".jpg") || n.endsWith(".jpeg") || n.endsWith(".gif")) {
+                        r.add(p.toString());
+                    }
+                }
+            }
+        } catch (Exception ignore) {}
+        return r;
+    }
+
+    // Me devuelve el panel contenedor del carrusel dentro del header.
     public static JPanel getCarrusel(Container header) {
         if (header instanceof JPanel jp) {
             for (Component c : jp.getComponents()) {
