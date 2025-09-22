@@ -20,7 +20,7 @@ public final class HeaderSeccion {
         // ---------- Logo izquierdo ----------
         JLabel logoIzq = new JLabel();
         try {
-            ImageIcon icon = new ImageIcon("img/fg logo.png");
+            ImageIcon icon = new ImageIcon("img/fg_logo1.png");
             if (icon.getIconWidth() > 0 && icon.getIconHeight() > 0) {
                 int h = 160; // altura objetivo del logo izquierdo
                 int w = (int) (icon.getIconWidth() * (h / (double) icon.getIconHeight()));

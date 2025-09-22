@@ -10,7 +10,7 @@ public class GanadoresPanel {
     public GanadoresPanel(){
         area = new JTextArea();
         area.setEditable(false);
-        area.setFont(new Font("Verdana", Font.PLAIN, 12));
+        area.setFont(new Font("Courier New", Font.PLAIN, 12));
         scroll = new JScrollPane(area);
     }
 
@@ -55,7 +55,7 @@ public class GanadoresPanel {
     }
 
     private void agregarEncabezado(int numJuego){
-        area.append(String.format("---- Juego %d -----%n", numJuego));
+        area.append(String.format("Juego: %d %n", numJuego));
     }
 
     private void agregarNotas(String note){

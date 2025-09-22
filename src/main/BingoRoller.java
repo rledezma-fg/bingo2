@@ -12,6 +12,13 @@ import javax.swing.text.DefaultCaret;
 public class BingoRoller extends JFrame {
     private static final long serialVersionUID = 1L;
 
+    //metodos inecesarios por cambios a peticion de retirar juego automatico, por mkt
+    // setAutoDrawSpeed() (de aqui dependia el slider)
+    // autoButtonPressed() (de aqui el boton automatico)
+    // allowPause() (este permitia pausar estado del juego)
+    // sleep() (usado por autoDraw para juego auto)
+    // AutoDraw (basicamente aqui vivia el modo automatico)
+
     // ********* Mini Bingo Cards **********
     MiniBingoCard miniCard1 = new MiniBingoCard(885, 0);
     MiniBingoCard miniCard2 = new MiniBingoCard(985, 0);
@@ -43,21 +50,21 @@ public class BingoRoller extends JFrame {
     ArrayList<JLabel> letterLabel = new ArrayList<>();
     ArrayList<JLabel> numberLabel = new ArrayList<>();
     ArrayList<Integer> rolledNumbers = new ArrayList<>();
-    ArrayList<Thread> autoThread = new ArrayList<>();
-    int currThreadIndex = 0;
-    Thread auto = new Thread(new AutoDraw());
-
-    volatile boolean paused = true;
-    Object lock = new Object();
-
     JButton drawButton = new JButton("Proximo numero");
     JButton resetButton = new JButton("Nuevo juego");
-    JButton autoButton = new JButton("Automatico");
-    JSlider speedSlider = new JSlider(1, 6, 3);
-    JLabel speedLabel = new JLabel();
 
-    Color color = new Color(255, 255, 255); // Color of frame
-    int autoDrawSpeed = 3;
+    //**************** para juego automatico, se comenta a peticion de mkt
+    // ArrayList<Thread> autoThread = new ArrayList<>();
+    // int currThreadIndex = 0;
+    // Thread auto = new Thread(new AutoDraw());
+    // volatile boolean paused = true;
+    // Object lock = new Object();
+    // JButton autoButton = new JButton("Automatico");
+    // JSlider speedSlider = new JSlider(1, 6, 3);
+    // JLabel speedLabel = new JLabel();
+    // int autoDrawSpeed = 3;
+
+    Color color = new Color(255, 255, 255); // Color de frame
 
     // ***************************************************************para poder escalar
     private JPanel center;
@@ -153,12 +160,12 @@ public class BingoRoller extends JFrame {
                 new Thread(() -> {
                     drawButton.setEnabled(false);
                     resetButton.setEnabled(false);
-                    autoButton.setEnabled(false);
-                    animateRandom();  // (puedes mover esto a RolledNumberPanel si quieres)
+                    // autoButton.setEnabled(false); --> se retira a peticion mkt
+                    animateRandom();  // (puede moverse esto a RolledNumberPanel)
                     draw();
                     drawButton.setEnabled(true);
                     resetButton.setEnabled(true);
-                    autoButton.setEnabled(true);
+                    // autoButton.setEnabled(true); --> se retira a peticion mkt
                 }).start();
             }
         });
@@ -216,27 +223,30 @@ public class BingoRoller extends JFrame {
                     //Reinicia botones
                     drawButton.setText("Proximo numero");
                     drawButton.setEnabled(true);
-                    autoButton.setText("Automatico");
-                    autoButton.setEnabled(true);
+
+                    // autoButton.setText("Automatico"); //--> se retira a peticion mkt
+                    // autoButton.setEnabled(true); // se retira a peticion mkt
                 }
             }
         });
 
-        autoButton.setFocusable(false);
-        autoButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
-        autoButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        autoButton.setBounds(275, 305, 150, 40);
-        autoButton.addActionListener(e -> autoButtonPressed());
+        /*se retira toda la logica de juego automatico a peticion mkt */
+
+        // autoButton.setFocusable(false);
+        // autoButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
+        // autoButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        // autoButton.setBounds(275, 305, 150, 40);
+        // autoButton.addActionListener(e -> autoButtonPressed());
 
         // auto draw speed slider
-        speedSlider.setBackground(color);
-        speedSlider.setBounds(275, 350, 150, 60);
-        speedSlider.setPreferredSize(new Dimension(200, 100));
-        speedSlider.setPaintTicks(true);
-        speedSlider.setMajorTickSpacing(1);
-        speedSlider.setPaintTrack(true);
-        speedSlider.setPaintLabels(true);
-        speedSlider.addChangeListener(e -> setAutoDrawSpeed());
+        // speedSlider.setBackground(color);
+        // speedSlider.setBounds(275, 350, 150, 60);
+        // speedSlider.setPreferredSize(new Dimension(200, 100));
+        // speedSlider.setPaintTicks(true);
+        // speedSlider.setMajorTickSpacing(1);
+        // speedSlider.setPaintTrack(true);
+        // speedSlider.setPaintLabels(true);
+        // speedSlider.addChangeListener(e -> setAutoDrawSpeed());
 
         //Para posiciones constantes para minicards y fields de ganador
         int txtGanadoresHeight = (int)(165 * 0.7);
@@ -265,7 +275,7 @@ public class BingoRoller extends JFrame {
         ganadorF4.addActionListener(ev -> bloquearGanador(miniCard4, ganadorF4));
 
         campoFinalizacion = new JTextField();
-        campoFinalizacion.setToolTipText("escribe nota y presiona enter paa registrar gandores");
+        campoFinalizacion.setToolTipText("escribe nota y presiona enter paa registrar ganadores");
         campoFinalizacion.setBounds(885,300,185,28);
 
         // log de numeros cantados
@@ -292,9 +302,10 @@ public class BingoRoller extends JFrame {
         playfield.add(newRollPanel);
         playfield.add(drawButton);
         playfield.add(resetButton);
-        playfield.add(autoButton);
-        playfield.add(speedSlider);
-        playfield.add(speedLabel);
+
+        // playfield.add(autoButton); --> se retira a peticion mkt
+        // playfield.add(speedSlider); --> se retira a peticion mkt
+        // playfield.add(speedLabel); --> se retira a peticion mkt
         playfield.add(miniCard1);
         playfield.add(miniCard2);
         playfield.add(miniCard3);
@@ -313,9 +324,9 @@ public class BingoRoller extends JFrame {
         rememberBase(newRollPanel, null);
         rememberBase(drawButton, 15f);
         rememberBase(resetButton, 15f);
-        rememberBase(autoButton, 15f);
-        rememberBase(speedSlider, null);
-        rememberBase(speedLabel, 12f);
+        // rememberBase(autoButton, 15f);   --> se retira a peticion mkt
+        // rememberBase(speedSlider, null); --> se retira a peticion mkt
+        // rememberBase(speedLabel, 12f);   --> se retira a peticion mkt
         rememberBase(miniCard1, null);
         rememberBase(miniCard2, null);
         rememberBase(miniCard3, null);
@@ -421,7 +432,7 @@ public class BingoRoller extends JFrame {
                         n.setBackground(Color.YELLOW);
                     else
                         n.setBackground(Color.WHITE);
-                    try { Thread.sleep(300); } catch (InterruptedException e) { e.printStackTrace(); }
+                    try { Thread.sleep(200); } catch (InterruptedException e) { e.printStackTrace(); }
                 }
             }
         }
@@ -435,17 +446,18 @@ public class BingoRoller extends JFrame {
         // fin de juego
         if (rolledNumbers.size() == 75) {
             drawButton.setEnabled(false);
-            autoButton.setEnabled(false);
             drawButton.setText("Fin del juego");
             resetButton.setEnabled(true);
-            auto = new Thread(new AutoDraw());
+            // autoButton.setEnabled(false); // --> Se retira a peticion mkt
+            // auto = new Thread(new AutoDraw()); // --> se retira a peticion mkt
         }
     }
 
-    //configuracion de velocidad del autospeed
-    private void setAutoDrawSpeed() { autoDrawSpeed = 6 - (speedSlider.getValue()); }
+    //configuracion de velocidad del autospeed (se retira a peticion de mkt)
+    // private void setAutoDrawSpeed() { autoDrawSpeed = 6 - (speedSlider.getValue()); }
 
     //para permitir pausar/reanudar con autospeed
+    /*
     private void autoButtonPressed() {
         if (!auto.isAlive()) auto.start();
 
@@ -472,13 +484,15 @@ public class BingoRoller extends JFrame {
             }
         }
     }
+    */
+
 
     //para tiempo de espera entre activacion y activacion
     private void sleep(long sec) {
         try { Thread.sleep(sec * 100); } catch (InterruptedException e) { e.printStackTrace(); }
     }
 
-    // todo: cambiar de archivo para seguir solid
+
     private void animateRandom() {
         for (int i = 0; i < 10; i++) {
             int number = rand.nextInt(1, 76);
@@ -490,10 +504,10 @@ public class BingoRoller extends JFrame {
     class AutoDraw implements Runnable {
         public void run() {
             while (rolledNumbers.size() < 75) {
-                allowPause();
+                // allowPause(); //se retira juego automatico a peticion de mkt
                 animateRandom();
                 draw();
-                sleep((long) autoDrawSpeed);
+                // sleep((long) autoDrawSpeed); // se retira a peticion de mkt
             }
         }
     }
@@ -571,7 +585,6 @@ public class BingoRoller extends JFrame {
         center.repaint();
     }
 
-    // ***************************************************************************************************
     // *************************************************************************************************** HEADER
     private JPanel buildHeaderPanel() {
         return HeaderSeccion.create();

@@ -28,6 +28,7 @@
         private final JButton btnSiguiente = new JButton("›");
 
 
+
         public PanelCarrusel(List<String> rutasOUrls) {
             setLayout(null);
             setBackground(Color.WHITE);
@@ -36,6 +37,15 @@
             setImagenes(rutasOUrls);
             estilizarBotones();
             add(btnAnterior); add(btnSiguiente);
+            btnAnterior.setFocusPainted(false);
+            btnAnterior.setBorderPainted(false);
+            btnAnterior.setContentAreaFilled(false);
+            btnAnterior.setOpaque(false);
+
+            btnSiguiente.setFocusPainted(false);
+            btnSiguiente.setBorderPainted(false);
+            btnSiguiente.setContentAreaFilled(false);
+            btnSiguiente.setOpaque(false);
 
             btnAnterior.addActionListener(e -> mostrarAnterior());
             btnSiguiente.addActionListener(e -> mostrarSiguiente());
@@ -113,18 +123,18 @@
                 b.setFocusable(false);
                 b.setBorderPainted(false);
                 b.setContentAreaFilled(true);
-                b.setBackground(new Color(255,255,255,180));
-                b.setFont(new Font("SansSerif", Font.BOLD, 22));
+                b.setBackground(new Color(255,255,255, 0));
+                b.setFont(new Font("SansSerif", Font.BOLD, 20));
                 b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             }
         }
 
         private void colocarOverlays(){
-            int h = Math.max(36, getHeight()/6);
-            int w = Math.max(36, h);
+            int h = Math.max(44, getHeight()/6);
+            int w = Math.max(44, h);
             int y = (getHeight()-h)/2;
-            btnAnterior.setBounds(10, y, w, h);
-            btnSiguiente.setBounds(getWidth()-w-10, y, w, h);
+            btnAnterior.setBounds(12, y, w, h);
+            btnSiguiente.setBounds(getWidth()-w-12, y, w, h);
         }
 
         //Para usar los botones bien
@@ -215,7 +225,7 @@
             g.fillRect(0,0,getWidth(),getHeight());
             g.setColor(Color.DARK_GRAY);
             String s = "Carrusel";
-            Font f = getFont().deriveFont(Font.PLAIN, 18f);
+            Font f = getFont().deriveFont(Font.PLAIN, 10f);
             FontMetrics fm = g.getFontMetrics(f);
             g.setFont(f);
             g.drawString(s, (getWidth()-fm.stringWidth(s))/2, getHeight()/2);
