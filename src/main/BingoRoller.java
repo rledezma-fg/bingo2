@@ -161,7 +161,7 @@ public class BingoRoller extends JFrame {
                     drawButton.setEnabled(false);
                     resetButton.setEnabled(false);
                     // autoButton.setEnabled(false); --> se retira a peticion mkt
-                    animateRandom();  // (puede moverse esto a RolledNumberPanel)
+                    animateRandom();
                     draw();
                     drawButton.setEnabled(true);
                     resetButton.setEnabled(true);
@@ -280,10 +280,10 @@ public class BingoRoller extends JFrame {
 
         // log de numeros cantados
         NumerosLogPanel numerosPanel = new NumerosLogPanel();
-        numerosPanel.setLayoutConfig(5, 12, false); // cols, ancho columna, porColumnas=false
+        numerosPanel.setLayoutConfig(7, 12, false); // cols, ancho columna, porColumnas=false
         numerosLog = numerosPanel.getArea();
         numerosScroll = numerosPanel.getScroll();
-        numerosScroll.setBounds(440, 300, 435, 135);
+        numerosScroll.setBounds(280, 300, 591, 135);
 
         // log de ganadores
         GanadoresPanel ganPanel = new GanadoresPanel();
@@ -497,7 +497,7 @@ public class BingoRoller extends JFrame {
         for (int i = 0; i < 10; i++) {
             int number = rand.nextInt(1, 76);
             newRollPanel.setNewNumber(number);
-            try { Thread.sleep(120); } catch (InterruptedException e) { e.printStackTrace(); }
+            try { Thread.sleep(20); } catch (InterruptedException e) { e.printStackTrace(); }
         }
     }
 
