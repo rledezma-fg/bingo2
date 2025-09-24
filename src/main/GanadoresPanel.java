@@ -37,15 +37,18 @@ public class GanadoresPanel {
 
     // para registrar ganadores aunque no confirmen nombres
     public void registrarGanadoresPendientes(
-            MiniBingoCard c1, String n1,
+            /*MiniBingoCard c1, String n1,
             MiniBingoCard c2, String n2,
             MiniBingoCard c3, String n3,
-            MiniBingoCard c4, String n4
+            MiniBingoCard c4, String n4*/
+            MiniBingoCard c1, String n
     ){
+        registrarGanador(safePattern(c1), n);
+        /*
         registrarGanador(safePattern(c1), n1);
         registrarGanador(safePattern(c2), n2);
         registrarGanador(safePattern(c3), n3);
-        registrarGanador(safePattern(c4), n4);
+        registrarGanador(safePattern(c4), n4);*/
     }
 
     private static String safePattern(MiniBingoCard c){

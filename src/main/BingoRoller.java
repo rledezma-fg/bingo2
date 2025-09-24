@@ -264,7 +264,6 @@ public class BingoRoller extends JFrame {
         // speedSlider.addChangeListener(e -> setAutoDrawSpeed());
 
         //Para posiciones constantes para minicards y fields de ganador
-        int txtGanadoresHeight = (int)(165 * 0.7);
 
         //Para los campos para ganadores por card
         /*
@@ -283,7 +282,7 @@ public class BingoRoller extends JFrame {
         ganadorF4.setBounds(miniCard4.getX(), miniCard4.getY() + miniCard4.getHeight() + 2, miniCard4.getWidth(), 22);
         */
 
-        ganadorBingo.setBounds(miniCard.getX(), miniCard.getY() + miniCard.getHeight() + 2, miniCard.getWidth(), 28);
+        ganadorBingo.setBounds(miniCard.getX(), miniCard.getY() + miniCard.getHeight()+8, miniCard.getWidth(), 30);
 
 
         //Inicializa banderas de ganador para evitar duplicados
@@ -307,7 +306,7 @@ public class BingoRoller extends JFrame {
 
         campoFinalizacion = new JTextField();
         campoFinalizacion.setToolTipText("escribe nota y presiona enter paa registrar ganadores");
-        campoFinalizacion.setBounds(885,230,185,28);
+        campoFinalizacion.setBounds(885,255,miniCard.getWidth(),30);
 
         // log de numeros cantados
         NumerosLogPanel numerosPanel = new NumerosLogPanel();
@@ -317,12 +316,13 @@ public class BingoRoller extends JFrame {
         numerosScroll.setBounds(280, 300, 591, 135);
 
         // log de ganadores
+        int txtGanadoresHeight = (int)(165 * 0.7);
         GanadoresPanel ganPanel = new GanadoresPanel();
         ganadoresLog = ganPanel.getArea();
         DefaultCaret caret = (DefaultCaret) ganadoresLog.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         ganadoresScroll = ganPanel.getScroll();
-        ganadoresScroll.setBounds(885, txtGanadoresHeight + 220, 185, 100);
+        ganadoresScroll.setBounds(885, txtGanadoresHeight+ 185, miniCard.getWidth(), 135);
 
         // arranque del registro de juego
         ganPanel.resetJuego(numJuego);
