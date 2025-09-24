@@ -20,13 +20,17 @@ public class BingoRoller extends JFrame {
     // AutoDraw (basicamente aqui vivia el modo automatico)
 
     // ********* Mini Bingo Cards **********
+    /*
     MiniBingoCard miniCard1 = new MiniBingoCard(885, 0);
     MiniBingoCard miniCard2 = new MiniBingoCard(985, 0);
     MiniBingoCard miniCard3 = new MiniBingoCard(885, 152);
     MiniBingoCard miniCard4 = new MiniBingoCard(985, 152);
+    */
+    MiniBingoCard miniCard = new MiniBingoCard(885, 0);
 
     //********* campos por minicard / fin de juego **********
-    JTextField ganadorF1, ganadorF2, ganadorF3, ganadorF4;
+    //JTextField ganadorF1, ganadorF2, ganadorF3, ganadorF4;
+    JTextField ganadorBingo;
     JTextField campoFinalizacion;
 
     // para los logs (refactor: paneles manejan su propio estado/render)
@@ -202,12 +206,16 @@ public class BingoRoller extends JFrame {
                     numerosPanel.clear();
 
                     //Reiniciar minicards
+                    /*
                     miniCard1.resetCard();
                     miniCard2.resetCard();
                     miniCard3.resetCard();
                     miniCard4.resetCard();
+                    */
+                    miniCard.resetCard();
 
                     //Reiniciar ganadores
+                    /*
                     ganadorF1.setText(""); ganadorF1.setEditable(true); ganadorF1.setEnabled(true); ganadorF1.setBackground(Color.WHITE);
                     ganadorF2.setText(""); ganadorF2.setEditable(true); ganadorF2.setEnabled(true); ganadorF2.setBackground(Color.WHITE);
                     ganadorF3.setText(""); ganadorF3.setEditable(true); ganadorF3.setEnabled(true); ganadorF3.setBackground(Color.WHITE);
@@ -218,6 +226,13 @@ public class BingoRoller extends JFrame {
                     setLogged(ganadorF2, false);
                     setLogged(ganadorF3, false);
                     setLogged(ganadorF4, false);
+                    */
+                    ganadorBingo.setText("");
+                    ganadorBingo.setEditable(true);
+                    ganadorBingo.setEnabled(true);
+                    ganadorBingo.setBackground(Color.WHITE);
+                    setLogged(ganadorBingo, false);
+
                     campoFinalizacion.setText("");
 
                     //Reinicia botones
@@ -252,31 +267,47 @@ public class BingoRoller extends JFrame {
         int txtGanadoresHeight = (int)(165 * 0.7);
 
         //Para los campos para ganadores por card
+        /*
         ganadorF1 = new JTextField();
         ganadorF2 = new JTextField();
         ganadorF3 = new JTextField();
         ganadorF4 = new JTextField();
+        */
+        ganadorBingo = new JTextField();
 
+
+        /*
         ganadorF1.setBounds(miniCard1.getX(), miniCard1.getY() + miniCard1.getHeight() + 2, miniCard1.getWidth(), 22);
         ganadorF2.setBounds(miniCard2.getX(), miniCard2.getY() + miniCard2.getHeight() + 2, miniCard2.getWidth(), 22);
         ganadorF3.setBounds(miniCard3.getX(), miniCard3.getY() + miniCard3.getHeight() + 2, miniCard3.getWidth(), 22);
         ganadorF4.setBounds(miniCard4.getX(), miniCard4.getY() + miniCard4.getHeight() + 2, miniCard4.getWidth(), 22);
+        */
+
+        ganadorBingo.setBounds(miniCard.getX(), miniCard.getY() + miniCard.getHeight() + 2, miniCard.getWidth(), 28);
+
 
         //Inicializa banderas de ganador para evitar duplicados
+        /*
         setLogged(ganadorF1, false);
         setLogged(ganadorF2, false);
         setLogged(ganadorF3, false);
         setLogged(ganadorF4, false);
+         */
+        setLogged(ganadorBingo, false);
 
         //bloquear ganador con enter
+        /*
         ganadorF1.addActionListener(ev -> bloquearGanador(miniCard1, ganadorF1));
         ganadorF2.addActionListener(ev -> bloquearGanador(miniCard2, ganadorF2));
         ganadorF3.addActionListener(ev -> bloquearGanador(miniCard3, ganadorF3));
         ganadorF4.addActionListener(ev -> bloquearGanador(miniCard4, ganadorF4));
+       */
+        ganadorBingo.addActionListener(ev -> bloquearGanador(miniCard,ganadorBingo));
+
 
         campoFinalizacion = new JTextField();
         campoFinalizacion.setToolTipText("escribe nota y presiona enter paa registrar ganadores");
-        campoFinalizacion.setBounds(885,300,185,28);
+        campoFinalizacion.setBounds(885,230,185,28);
 
         // log de numeros cantados
         NumerosLogPanel numerosPanel = new NumerosLogPanel();
@@ -306,14 +337,20 @@ public class BingoRoller extends JFrame {
         // playfield.add(autoButton); --> se retira a peticion mkt
         // playfield.add(speedSlider); --> se retira a peticion mkt
         // playfield.add(speedLabel); --> se retira a peticion mkt
+        /*
         playfield.add(miniCard1);
         playfield.add(miniCard2);
         playfield.add(miniCard3);
         playfield.add(miniCard4);
+        */
+        playfield.add(miniCard);
+        playfield.add(ganadorBingo);
+        /*
         playfield.add(ganadorF1);
         playfield.add(ganadorF2);
         playfield.add(ganadorF3);
         playfield.add(ganadorF4);
+        */
         playfield.add(campoFinalizacion);
         playfield.add(ganadoresScroll);
         playfield.add(numerosScroll);
@@ -327,14 +364,18 @@ public class BingoRoller extends JFrame {
         // rememberBase(autoButton, 15f);   --> se retira a peticion mkt
         // rememberBase(speedSlider, null); --> se retira a peticion mkt
         // rememberBase(speedLabel, 12f);   --> se retira a peticion mkt
-        rememberBase(miniCard1, null);
-        rememberBase(miniCard2, null);
-        rememberBase(miniCard3, null);
-        rememberBase(miniCard4, null);
+        // rememberBase(miniCard1, null);
+        // rememberBase(miniCard2, null);
+        // rememberBase(miniCard3, null);
+        // rememberBase(miniCard4, null);
+        rememberBase(miniCard, null);
+        /*
         rememberBase(ganadorF1, 12f);
         rememberBase(ganadorF2, 12f);
         rememberBase(ganadorF3, 12f);
         rememberBase(ganadorF4, 12f);
+        */
+        rememberBase(ganadorBingo, 12f);
         rememberBase(campoFinalizacion, 12f);
         rememberBase(ganadoresScroll, null);
         rememberBase(numerosScroll, null);
@@ -395,7 +436,7 @@ public class BingoRoller extends JFrame {
             setLogged(nom, true);
         }
 
-        // bloquear interaccion de minicards cuando alguien gana
+        // bloquear interaccion de minicard cuando alguien gana
         card.bloquearGanador();
         nom.setEditable(false);
         nom.setEnabled(false);
@@ -405,10 +446,14 @@ public class BingoRoller extends JFrame {
     // para cuando no confirman ganador, pero si escriben algo
     private void ganadorPendiente() {
         ganPanel.registrarGanadoresPendientes(
+/*
                 miniCard1, ganadorF1.getText(),
                 miniCard2, ganadorF2.getText(),
                 miniCard3, ganadorF3.getText(),
-                miniCard4, ganadorF4.getText()
+                miniCard4, ganadorF4.getText(),
+
+ */
+                miniCard,ganadorBingo.getText()
         );
     }
 

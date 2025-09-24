@@ -8,10 +8,7 @@ import java.util.List;
 public final class HeaderSeccion {
     private HeaderSeccion() {}
 
-    //    todo:
-    //     contenedor de logo izq
-    //     contenedor del carrusel avisos
-    //     contenedor logo der
+
     public static JPanel create() {
         JPanel header = new JPanel(new BorderLayout());
         header.setBorder(BorderFactory.createEmptyBorder(6, 10, 6, 10));

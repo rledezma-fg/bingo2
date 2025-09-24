@@ -15,6 +15,11 @@ public class MiniBingoCard extends JPanel implements ActionListener {
     private static final int PADDING   = 1;
     private static final int COMBO_MIN = 22;
     private static final int COMBO_MAX = 30;
+    private static final int NODO_COMODIN = 12;
+
+    private static Color colorComodin = new Color(187,232,37);
+
+    private double escala = 0.7;
 
     boolean bloquear = false;
     ArrayList<JButton> node = new ArrayList<>();
@@ -22,15 +27,26 @@ public class MiniBingoCard extends JPanel implements ActionListener {
     JPanel cardPanel;
     JComboBox<String> patternComboBox;
 
+
     MiniBingoCard(int x, int y) {
+        this(x, y, 1.5);
+    }
+
+
+    MiniBingoCard(int x, int y, double escalado) {
+        this.escala = escalado;
 
         this.setLayout(null);
-        this.setBounds(x, y, (int) (120 *0.7) , (int)(170 * 0.7));
-        this.setBackground(Color.GRAY);
+
+        int w = (int)(120 * escalado);
+        int h = (int)(140 * escalado);
+
+        this.setBounds(x, y, w, h);
+        this.setPreferredSize(new Dimension(w, h));
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
-        String[] str = { "Personalizado", "Diagonal","Equis", "Horizontal", "Vertical", "Esquina", "Diamante interno",
-                "Diamante externo", "Completa" };
+        String[] str = { "Personalizado", "Diagonal","Equis", "Horizontal", "Vertical", "Esquina",
+                "Diamante interno", "Diamante externo", "Completa" };
 
         pattern.put("Personalizado", Pattern.CUSTOM);
         pattern.put("Diagonal", Pattern.DIAGONAL);
@@ -45,14 +61,19 @@ public class MiniBingoCard extends JPanel implements ActionListener {
         patternComboBox = new JComboBox<>(str);
         patternComboBox.addActionListener(this);
         patternComboBox.setToolTipText("Patrón");
-        patternComboBox.setFont(new java.awt.Font("Verdana", Font.PLAIN, 10));
+        patternComboBox.setFont(new Font("Verdana", Font.PLAIN, (int)(10 * escala)));
 
         cardPanel = new JPanel(new GridLayout(5, 5, 1, 1));
-        cardPanel.setBackground(Color.GRAY);
+        cardPanel.setBackground(Color.WHITE);
 
         for (int i = 0; i < 25; i++) {
             JButton b = new JButton();
-            b.setBackground(Color.WHITE);
+            if(i == 12){
+                b.setBackground(colorComodin);
+                b.setEnabled(false);
+            }else {
+                b.setBackground(Color.WHITE);
+            }
             b.addActionListener(this);
             node.add(b);
             cardPanel.add(b);
@@ -61,6 +82,7 @@ public class MiniBingoCard extends JPanel implements ActionListener {
         this.add(patternComboBox);
         this.add(cardPanel);
     }
+
 
     @Override
     public void doLayout() {
@@ -75,17 +97,16 @@ public class MiniBingoCard extends JPanel implements ActionListener {
         int innerH = Math.max(0, h - 3 * PADDING - comboH);
 
         patternComboBox.setBounds(x, y, innerW, comboH);
-
-        int side = Math.min(innerW, innerH);
-        int gx = x + (innerW - side) / 2;
-        int gy = y + comboH + PADDING + (innerH - side) / 2;
-
-        cardPanel.setBounds(gx, gy, side, side);
+        int gx = x;
+        int gy = y + comboH + PADDING;
+        cardPanel.setBounds(gx, gy, innerW, innerH);
     }
 
     void clearNodes() {
-
-        node.forEach(node -> node.setBackground(Color.WHITE));
+        for (int i = 0; i < node.size(); i++) {          // ✅ respeta comodín
+            if (i == 12) node.get(i).setBackground(colorComodin);
+            else node.get(i).setBackground(Color.WHITE);
+        }
 
     }
 
@@ -126,15 +147,17 @@ public class MiniBingoCard extends JPanel implements ActionListener {
         }
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
     }
+    private void pintarExceptoComodin (int idx) {
+        if (idx != NODO_COMODIN) node.get(idx).setBackground(Color.RED);
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (bloquear) return;
-        // sets the value of combobox to custom when the user changes the card
         for (int i = 0; i < 25; i++) {
             if (e.getSource() == node.get(i)) {
-
                 patternComboBox.setSelectedIndex(0);
+                if (i == 12) return;
                 if (node.get(i).getBackground() == Color.WHITE) {
                     node.get(i).setBackground(Color.RED);
                 } else {
@@ -150,26 +173,26 @@ public class MiniBingoCard extends JPanel implements ActionListener {
             case DIAGONAL:
                 clearNodes();
                 for (int i = 0; i < 25; i += 6) {
-                    node.get(i).setBackground(Color.RED);
+                    pintarExceptoComodin(i);
                 }
                 break;
             case DOUBLEDIAGONAL:
                 clearNodes();
                 for (int i = 0; i < 25; i += 6) {
-                    node.get(i).setBackground(Color.RED);
+                    pintarExceptoComodin(i);
                 }
                 for (int i = 4; i <= 20; i += 4) {
-                    node.get(i).setBackground(Color.RED);
+                    pintarExceptoComodin(i);
                 }
                 break;
             case LINE_ACROSS:
                 clearNodes();
-                for (int i = 10; i < 15; i++) node.get(i).setBackground(Color.RED);
+                for (int i = 10; i < 15; i++) pintarExceptoComodin(i);
                 break;
             case LINE_DOWN:
                 clearNodes();
                 for (int i = 2; i <= 22; i += 5) {
-                    node.get(i).setBackground(Color.RED);
+                    pintarExceptoComodin(i);
                 }
                 break;
             case POSTAGE_STAMP:
@@ -180,19 +203,17 @@ public class MiniBingoCard extends JPanel implements ActionListener {
                 node.get(7).setBackground(Color.RED);
                 node.get(8).setBackground(Color.RED);
                 node.get(9).setBackground(Color.RED);
-                node.get(12).setBackground(Color.RED);
                 node.get(13).setBackground(Color.RED);
                 node.get(14).setBackground(Color.RED);
                 break;
             case INSIDE_DIAMOND:
                 clearNodes();
                 for (int fila = 0; fila < 5; fila++) {
-
                     for (int col = 0; col < 5; col++) {
                         int dist = Math.abs(fila - (5/2)) + Math.abs(col - (5/2));
                         if (dist <= (5/2)) {
                             int index = fila * 5 + col;
-                            node.get(index).setBackground(Color.RED);
+                            pintarExceptoComodin(index);
                         }
                     }
                 }
@@ -202,9 +223,9 @@ public class MiniBingoCard extends JPanel implements ActionListener {
                 for (int fila = 0; fila < 5; fila++) {
                     for (int col = 0; col < 5; col++) {
                         int dist = Math.abs(fila - (5/2)) + Math.abs(col - (5/2));
-                        if (dist > 5/2) {
+                        if ( dist > 5/2) {
                             int index = fila * 5 + col;
-                            node.get(index).setBackground(Color.RED);
+                            pintarExceptoComodin(index);
                         }
                     }
                 }
@@ -212,7 +233,7 @@ public class MiniBingoCard extends JPanel implements ActionListener {
             case FULL:
                 clearNodes();
                 for (int i = 0; i <= 24; i ++) {
-                    node.get(i).setBackground(Color.RED);
+                    pintarExceptoComodin(i);
                 }
                 break;
             default:
