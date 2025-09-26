@@ -9,10 +9,6 @@ import javax.swing.JPanel;
 
 public class RolledNumberPanel extends JPanel {
 
-    /**
-     *
-     */
-
     private static final long serialVersionUID = 1L;
     JLabel letterLabel;
     JLabel numberLabel;

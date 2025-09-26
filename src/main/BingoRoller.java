@@ -3,16 +3,17 @@ package main;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Random;
-
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 
 public class BingoRoller extends JFrame {
     private static final long serialVersionUID = 1L;
+    private static final boolean SCALE_FONTS = false;
 
-    //metodos inecesarios por cambios a peticion de retirar juego automatico, por mkt
+    //--> metodos inecesarios por cambios a peticion de retirar juego automatico, por mkt
     // setAutoDrawSpeed() (de aqui dependia el slider)
     // autoButtonPressed() (de aqui el boton automatico)
     // allowPause() (este permitia pausar estado del juego)
@@ -21,19 +22,19 @@ public class BingoRoller extends JFrame {
 
     // ********* Mini Bingo Cards **********
     /*
-    MiniBingoCard miniCard1 = new MiniBingoCard(885, 0);
-    MiniBingoCard miniCard2 = new MiniBingoCard(985, 0);
-    MiniBingoCard miniCard3 = new MiniBingoCard(885, 152);
-    MiniBingoCard miniCard4 = new MiniBingoCard(985, 152);
+    MiniBingoCard miniCard1 = new MiniBingoCard(885, 0);    // --> se retira para dejar solo un minicard
+    MiniBingoCard miniCard2 = new MiniBingoCard(985, 0);    // --> se retira para dejar solo un minicard
+    MiniBingoCard miniCard3 = new MiniBingoCard(885, 152);  // --> se retira para dejar solo un minicard
+    MiniBingoCard miniCard4 = new MiniBingoCard(985, 152);  // --> se retira para dejar solo un minicard
     */
     MiniBingoCard miniCard = new MiniBingoCard(885, 0);
 
     //********* campos por minicard / fin de juego **********
-    //JTextField ganadorF1, ganadorF2, ganadorF3, ganadorF4;
+    //JTextField ganadorF1, ganadorF2, ganadorF3, ganadorF4; //--> se retira para dejar solo un campo de ganador
     JTextField ganadorBingo;
     JTextField campoFinalizacion;
 
-    // para los logs (refactor: paneles manejan su propio estado/render)
+    // para los logs
     JTextArea ganadoresLog;
     JScrollPane ganadoresScroll;
     JTextArea numerosLog;
@@ -54,10 +55,10 @@ public class BingoRoller extends JFrame {
     ArrayList<JLabel> letterLabel = new ArrayList<>();
     ArrayList<JLabel> numberLabel = new ArrayList<>();
     ArrayList<Integer> rolledNumbers = new ArrayList<>();
-    JButton drawButton = new JButton("Proximo numero");
+    JButton drawButton = new JButton("Próximo número");
     JButton resetButton = new JButton("Nuevo juego");
 
-    //**************** para juego automatico, se comenta a peticion de mkt
+    //**************** --> para juego automatico, se comenta a peticion de mkt
     // ArrayList<Thread> autoThread = new ArrayList<>();
     // int currThreadIndex = 0;
     // Thread auto = new Thread(new AutoDraw());
@@ -70,14 +71,18 @@ public class BingoRoller extends JFrame {
 
     Color color = new Color(255, 255, 255); // Color de frame
 
-    // ***************************************************************para poder escalar
+    // *************************************************************** --> para poder escalar
     private JPanel center;
     private JPanel playfield;
+
+    private JPanel  playWrapper; // contenedor que llena el centro y centra el playfield
+
     private static final int BASE_W = 1069;
     private static final int BASE_H = 434;
 
-    private static final int MAX_W  = 1200; // Max ancho escalado para playfield
-    private static final int MAX_H  = 550;  // Max alto escalado para playfield
+    private static final int MAX_W  = 1600; // --> Max ancho escalado para playfield
+    private static final int MAX_H  = 800;  // --> Max alto escalado para playfield
+    private static final int MARGEN_INFERIOR = 20;
 
     private final java.util.LinkedHashMap<Component, BaseMeta> baseMap = new java.util.LinkedHashMap<>();
 
@@ -99,20 +104,34 @@ public class BingoRoller extends JFrame {
         // ******************************************************************tamaño general
         this.setTitle("Bingo FG");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(1100, 650);
-        this.setMinimumSize(new Dimension(1100, 650));
+        this.setSize(1100, 680);
+        this.setMinimumSize(new Dimension(1100, 680));
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout());
         this.getContentPane().setBackground(color.WHITE);
 
         // ****************************************************************** header
         header = buildHeaderPanel();
-        this.add(header, BorderLayout.NORTH);
+        JPanel headerWrap = new JPanel(new BorderLayout());
+        headerWrap.setBackground(Color.WHITE);
+        headerWrap.add(header, BorderLayout.CENTER);
+        headerWrap.add(Box.createVerticalStrut(20), BorderLayout.SOUTH);
+
+        this.add(headerWrap, BorderLayout.NORTH);
         carruselPanel = HeaderSeccion.getCarrusel(header);
+        HeaderSeccion.actualizarAlturaHeader(header, 160);
+        HeaderSeccion.setAlturaHeaderMax(header, 260);
 
         center = new JPanel(new GridBagLayout());
+        center.setBorder(BorderFactory.createEmptyBorder(0, 0, MARGEN_INFERIOR, 0));
+        this.add(center, BorderLayout.CENTER);
         center.setBackground(color.WHITE);
         this.add(center, BorderLayout.CENTER);
+        center.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override public void componentResized(java.awt.event.ComponentEvent e) {
+                javax.swing.SwingUtilities.invokeLater(() -> escalarPlayfield());
+            }
+        });
 
         playfield = new JPanel(null);
         playfield.setPreferredSize(new Dimension(BASE_W, BASE_H));
@@ -202,30 +221,29 @@ public class BingoRoller extends JFrame {
                     // reiniciar tablero y paneles
                     numberLabel.forEach(n -> n.setBackground(Color.WHITE));
                     rolledNumbers.clear();
-
                     numerosPanel.clear();
+                    miniCard.resetCard();
 
-                    //Reiniciar minicards
+                    //Reiniciar minicards //-->  ( se retiran los 4 minicard para dejar solo uno, esto porque cambio logica de uso)
                     /*
                     miniCard1.resetCard();
                     miniCard2.resetCard();
                     miniCard3.resetCard();
                     miniCard4.resetCard();
                     */
-                    miniCard.resetCard();
 
                     //Reiniciar ganadores
                     /*
-                    ganadorF1.setText(""); ganadorF1.setEditable(true); ganadorF1.setEnabled(true); ganadorF1.setBackground(Color.WHITE);
-                    ganadorF2.setText(""); ganadorF2.setEditable(true); ganadorF2.setEnabled(true); ganadorF2.setBackground(Color.WHITE);
-                    ganadorF3.setText(""); ganadorF3.setEditable(true); ganadorF3.setEnabled(true); ganadorF3.setBackground(Color.WHITE);
-                    ganadorF4.setText(""); ganadorF4.setEditable(true); ganadorF4.setEnabled(true); ganadorF4.setBackground(Color.WHITE);
+                    ganadorF1.setText(""); ganadorF1.setEditable(true); ganadorF1.setEnabled(true); ganadorF1.setBackground(Color.WHITE); //--> se retira para dejar un solo minicard
+                    ganadorF2.setText(""); ganadorF2.setEditable(true); ganadorF2.setEnabled(true); ganadorF2.setBackground(Color.WHITE); //--> se retira para dejar un solo minicard
+                    ganadorF3.setText(""); ganadorF3.setEditable(true); ganadorF3.setEnabled(true); ganadorF3.setBackground(Color.WHITE); //--> se retira para dejar un solo minicard
+                    ganadorF4.setText(""); ganadorF4.setEditable(true); ganadorF4.setEnabled(true); ganadorF4.setBackground(Color.WHITE); //--> se retira para dejar un solo minicard
 
                     //Reset banderas + comentario
-                    setLogged(ganadorF1, false);
-                    setLogged(ganadorF2, false);
-                    setLogged(ganadorF3, false);
-                    setLogged(ganadorF4, false);
+                    setLogged(ganadorF1, false); //--> se retira para dejar un solo minicard
+                    setLogged(ganadorF2, false); //--> se retira para dejar un solo minicard
+                    setLogged(ganadorF3, false); //--> se retira para dejar un solo minicard
+                    setLogged(ganadorF4, false); //--> se retira para dejar un solo minicard
                     */
                     ganadorBingo.setText("");
                     ganadorBingo.setEditable(true);
@@ -240,12 +258,12 @@ public class BingoRoller extends JFrame {
                     drawButton.setEnabled(true);
 
                     // autoButton.setText("Automatico"); //--> se retira a peticion mkt
-                    // autoButton.setEnabled(true); // se retira a peticion mkt
+                    // autoButton.setEnabled(true); // --> se retira a peticion mkt
                 }
             }
         });
 
-        /*se retira toda la logica de juego automatico a peticion mkt */
+        /* --> se retira toda la logica de juego automatico a peticion mkt */
 
         // autoButton.setFocusable(false);
         // autoButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
@@ -264,45 +282,39 @@ public class BingoRoller extends JFrame {
         // speedSlider.addChangeListener(e -> setAutoDrawSpeed());
 
         //Para posiciones constantes para minicards y fields de ganador
-
+        // (retirado y reemplazado por solo 1 minicard + campo de nombre de ganador
         //Para los campos para ganadores por card
+        //--> se retiro por cambio de logica, ahora solo habrá 1 minicard
         /*
         ganadorF1 = new JTextField();
         ganadorF2 = new JTextField();
         ganadorF3 = new JTextField();
         ganadorF4 = new JTextField();
-        */
-        ganadorBingo = new JTextField();
-
-
-        /*
         ganadorF1.setBounds(miniCard1.getX(), miniCard1.getY() + miniCard1.getHeight() + 2, miniCard1.getWidth(), 22);
         ganadorF2.setBounds(miniCard2.getX(), miniCard2.getY() + miniCard2.getHeight() + 2, miniCard2.getWidth(), 22);
         ganadorF3.setBounds(miniCard3.getX(), miniCard3.getY() + miniCard3.getHeight() + 2, miniCard3.getWidth(), 22);
         ganadorF4.setBounds(miniCard4.getX(), miniCard4.getY() + miniCard4.getHeight() + 2, miniCard4.getWidth(), 22);
         */
-
+        ganadorBingo = new JTextField();
         ganadorBingo.setBounds(miniCard.getX(), miniCard.getY() + miniCard.getHeight()+8, miniCard.getWidth(), 30);
 
-
-        //Inicializa banderas de ganador para evitar duplicados
+        // --> Inicializa banderas de ganador para evitar duplicados
         /*
-        setLogged(ganadorF1, false);
-        setLogged(ganadorF2, false);
-        setLogged(ganadorF3, false);
-        setLogged(ganadorF4, false);
+        setLogged(ganadorF1, false); //--> se retira para cambiar por solo un campo de ganador
+        setLogged(ganadorF2, false); //--> se retira para cambiar por solo un campo de ganador
+        setLogged(ganadorF3, false); //--> se retira para cambiar por solo un campo de ganador
+        setLogged(ganadorF4, false); //--> se retira para cambiar por solo un campo de ganador
          */
         setLogged(ganadorBingo, false);
 
-        //bloquear ganador con enter
+        //--> bloquear ganador con enter
         /*
-        ganadorF1.addActionListener(ev -> bloquearGanador(miniCard1, ganadorF1));
-        ganadorF2.addActionListener(ev -> bloquearGanador(miniCard2, ganadorF2));
-        ganadorF3.addActionListener(ev -> bloquearGanador(miniCard3, ganadorF3));
-        ganadorF4.addActionListener(ev -> bloquearGanador(miniCard4, ganadorF4));
+        ganadorF1.addActionListener(ev -> bloquearGanador(miniCard1, ganadorF1)); //--> se retira para dejar solo un minicard
+        ganadorF2.addActionListener(ev -> bloquearGanador(miniCard2, ganadorF2)); //--> se retira para dejar solo un minicard
+        ganadorF3.addActionListener(ev -> bloquearGanador(miniCard3, ganadorF3)); //--> se retira para dejar solo un minicard
+        ganadorF4.addActionListener(ev -> bloquearGanador(miniCard4, ganadorF4)); //--> se retira para dejar solo un minicard
        */
         ganadorBingo.addActionListener(ev -> bloquearGanador(miniCard,ganadorBingo));
-
 
         campoFinalizacion = new JTextField();
         campoFinalizacion.setToolTipText("escribe nota y presiona enter paa registrar ganadores");
@@ -310,7 +322,7 @@ public class BingoRoller extends JFrame {
 
         // log de numeros cantados
         NumerosLogPanel numerosPanel = new NumerosLogPanel();
-        numerosPanel.setLayoutConfig(7, 12, false); // cols, ancho columna, porColumnas=false
+        numerosPanel.setLayoutConfig(12, 7, false); // cols, ancho columna, porColumnas=false
         numerosLog = numerosPanel.getArea();
         numerosScroll = numerosPanel.getScroll();
         numerosScroll.setBounds(280, 300, 591, 135);
@@ -334,22 +346,22 @@ public class BingoRoller extends JFrame {
         playfield.add(drawButton);
         playfield.add(resetButton);
 
-        // playfield.add(autoButton); --> se retira a peticion mkt
-        // playfield.add(speedSlider); --> se retira a peticion mkt
-        // playfield.add(speedLabel); --> se retira a peticion mkt
+        // playfield.add(autoButton); // --> se retira a peticion mkt
+        // playfield.add(speedSlider);// --> se retira a peticion mkt
+        // playfield.add(speedLabel); // --> se retira a peticion mkt
         /*
-        playfield.add(miniCard1);
-        playfield.add(miniCard2);
-        playfield.add(miniCard3);
-        playfield.add(miniCard4);
+        playfield.add(miniCard1); //--> se retira para dejar solo un minicard
+        playfield.add(miniCard2); //--> se retira para dejar solo un minicard
+        playfield.add(miniCard3); //--> se retira para dejar solo un minicard
+        playfield.add(miniCard4); //--> se retira para dejar solo un minicard
         */
         playfield.add(miniCard);
         playfield.add(ganadorBingo);
         /*
-        playfield.add(ganadorF1);
-        playfield.add(ganadorF2);
-        playfield.add(ganadorF3);
-        playfield.add(ganadorF4);
+        playfield.add(ganadorF1); //--> se retira para dejar solo un campo de ganador
+        playfield.add(ganadorF2); //--> se retira para dejar solo un campo de ganador
+        playfield.add(ganadorF3); //--> se retira para dejar solo un campo de ganador
+        playfield.add(ganadorF4); //--> se retira para dejar solo un campo de ganador
         */
         playfield.add(campoFinalizacion);
         playfield.add(ganadoresScroll);
@@ -361,56 +373,63 @@ public class BingoRoller extends JFrame {
         rememberBase(newRollPanel, null);
         rememberBase(drawButton, 15f);
         rememberBase(resetButton, 15f);
-        // rememberBase(autoButton, 15f);   --> se retira a peticion mkt
-        // rememberBase(speedSlider, null); --> se retira a peticion mkt
-        // rememberBase(speedLabel, 12f);   --> se retira a peticion mkt
-        // rememberBase(miniCard1, null);
-        // rememberBase(miniCard2, null);
-        // rememberBase(miniCard3, null);
-        // rememberBase(miniCard4, null);
+        // rememberBase(autoButton, 15f);   //--> se retira a peticion mkt
+        // rememberBase(speedSlider, null); //--> se retira a peticion mkt
+        // rememberBase(speedLabel, 12f);   //--> se retira a peticion mkt
+        // rememberBase(miniCard1, null);   //--> se retira para dejar un solo minicard
+        // rememberBase(miniCard2, null);   //--> se retira para dejar un solo minicard
+        // rememberBase(miniCard3, null);   //--> se retira para dejar un solo minicard
+        // rememberBase(miniCard4, null);   //--> se retira para dejar un solo minicard
         rememberBase(miniCard, null);
         /*
-        rememberBase(ganadorF1, 12f);
-        rememberBase(ganadorF2, 12f);
-        rememberBase(ganadorF3, 12f);
-        rememberBase(ganadorF4, 12f);
+        rememberBase(ganadorF1, 12f);   //--> se retira para dejar un solo campo de ganador
+        rememberBase(ganadorF2, 12f);   //--> se retira para dejar un solo campo de ganador
+        rememberBase(ganadorF3, 12f);   //--> se retira para dejar un solo campo de gandor
+        rememberBase(ganadorF4, 12f);   //--> se retira para dejar un solo campo de ganador
         */
         rememberBase(ganadorBingo, 12f);
         rememberBase(campoFinalizacion, 12f);
         rememberBase(ganadoresScroll, null);
         rememberBase(numerosScroll, null);
 
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill    = GridBagConstraints.BOTH;
+        gbc.anchor  = GridBagConstraints.NORTH;
+
+        // centra el playfield sin estirarlo
+        playWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        playWrapper.setOpaque(false);
+        playWrapper.add(playfield);
+
+        center.add(playWrapper, gbc);
+
+        escalarPlayfield();
+        this.setVisible(true);
+
+        this.numerosPanel = numerosPanel;
+        this.ganPanel = ganPanel;
+
         // para usar carrusel adaptable
         this.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override public void componentResized(java.awt.event.ComponentEvent e) {
                 escalarPlayfield();
 
-                if (carruselPanel != null) {
-                    int contH = getContentPane().getHeight();
-                    int playH = (playfield != null && playfield.getPreferredSize() != null)
-                            ? playfield.getPreferredSize().height : 0;
+                int base = 160;
+                int maxHeader = 360;
+                int extra = Math.max(0, getHeight() - 650);
+                int target = Math.min(base + extra / 3, maxHeader);
 
-                    int margen = 30;
-                    int hDeseado = Math.max(140, contH - playH - margen);
-                    carruselPanel.setPreferredSize(new Dimension(10, hDeseado));
-                    header.revalidate();
-                    header.repaint();
-                }
+                HeaderSeccion.setAlturaHeaderMax(header, maxHeader);
+                HeaderSeccion.actualizarAlturaHeader(header, target);
+
+                Container cp = getContentPane();
+                cp.revalidate();
+                cp.repaint();
             }
         });
-
-        escalarPlayfield();
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0; gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.anchor = GridBagConstraints.NORTH;
-        center.add(playfield, gbc);
-
-        this.setVisible(true);
-
-        this.numerosPanel = numerosPanel;
-        this.ganPanel = ganPanel;
     }
 
     // referencias a paneles usados en métodos privados
@@ -445,16 +464,16 @@ public class BingoRoller extends JFrame {
 
     // para cuando no confirman ganador, pero si escriben algo
     private void ganadorPendiente() {
-        ganPanel.registrarGanadoresPendientes(
-/*
-                miniCard1, ganadorF1.getText(),
-                miniCard2, ganadorF2.getText(),
-                miniCard3, ganadorF3.getText(),
-                miniCard4, ganadorF4.getText(),
-
- */
-                miniCard,ganadorBingo.getText()
-        );
+        String nombre = (ganadorBingo.getText() == null) ? "" : ganadorBingo.getText().trim();
+            /*
+            miniCard1, ganadorF1.getText(), // ahora funcionara solo con 1 ganador, se retira para cambio de logica
+            miniCard2, ganadorF2.getText(), // ahora funcionara solo con 1 ganador, se retira para cambio de logica
+            miniCard3, ganadorF3.getText(), // ahora funcionara solo con 1 ganador, se retira para cambio de logica
+            miniCard4, ganadorF4.getText(), // ahora funcionara solo con 1 ganador, se retira para cambio de logica
+            */
+        if (!nombre.isEmpty() && !isLogged(ganadorBingo)) {
+            ganPanel.registrarGanadoresPendientes(miniCard, nombre);
+        }
     }
 
     public void draw() {
@@ -537,7 +556,6 @@ public class BingoRoller extends JFrame {
         try { Thread.sleep(sec * 100); } catch (InterruptedException e) { e.printStackTrace(); }
     }
 
-
     private void animateRandom() {
         for (int i = 0; i < 10; i++) {
             int number = rand.nextInt(1, 76);
@@ -560,72 +578,67 @@ public class BingoRoller extends JFrame {
     //****************************************************************** Playfield
     private void escalarPlayfield() {
         if (center == null || playfield == null) return;
-        int anchoDisponible = Math.max(0, center.getWidth() - 50);
-        int altoDisponible  = center.getHeight();
-        if (anchoDisponible <= 0 || altoDisponible <= 0) return;
 
-        double sAvail = Math.min(anchoDisponible / (double) BASE_W,
-                altoDisponible  / (double) BASE_H);
-        double sMax   = Math.min(MAX_W / (double) BASE_W,
-                MAX_H / (double) BASE_H);
-        double s = Math.min(sAvail, sMax);
+        // Área útil REAL del panel center y evitar cortes al maximizar
+        Insets ci = center.getInsets();
+        int anchoUtil = Math.max(0, center.getWidth()  - ci.left - ci.right - 50);
+        int altoUtil  = Math.max(0, center.getHeight() - ci.top  - ci.bottom);
+        if (anchoUtil <= 0 || altoUtil <= 0) return;
+
+        // Escala disponible vs. límites máximos
+        double sAvail = Math.min(anchoUtil / (double) BASE_W, altoUtil / (double) BASE_H);
+        double sMax   = Math.min(MAX_W   / (double) BASE_W,  MAX_H  / (double) BASE_H);
+        double s      = Math.min(sAvail, sMax);
         if (s <= 0) s = 1.0;
 
+        // Reposicionar/reescalar todos los componentes que recuerdan su base
         for (var entry : baseMap.entrySet()) {
-            Component c = entry.getKey();
-            BaseMeta bm = entry.getValue();
-            Rectangle r = bm.r;
+            Component  c  = entry.getKey();
+            BaseMeta   bm = entry.getValue();
+            Rectangle  r  = bm.r;
 
-            int x = sc(r.x, s);
-            int y = sc(r.y, s);
-            int w = sc(r.width, s);
+            int x = sc(r.x,      s);
+            int y = sc(r.y,      s);
+            int w = sc(r.width,  s);
             int h = sc(r.height, s);
             c.setBounds(x, y, w, h);
         }
 
+        // Tamaño escalado del tablero
         int anchoEscalado = sc(BASE_W, s);
         int altoEscalado  = sc(BASE_H, s);
 
-        int altoCap = Math.min(altoDisponible, MAX_H);
+        // Reparto del espacio vertical extra (dejando reserva para respiración)
+        int altoCap = Math.min(altoUtil, MAX_H);
         int extraH  = Math.max(0, altoCap - altoEscalado);
 
-        int extraNumeros   = (int) Math.round(extraH * 0.50);
-        int extraGanadores = extraH - extraNumeros;
+        final int reservaPlayfield = 20;
+        int extraParaLogs = Math.max(0, extraH - reservaPlayfield);
+
+        int extraNumeros   = (int) Math.round(extraParaLogs * 0.50);
+        int extraGanadores = extraParaLogs - extraNumeros;
 
         if (numerosScroll != null) {
             Rectangle rb = baseMap.get(numerosScroll).r;
-            int newH = sc(rb.height, s) + extraNumeros;
-            numerosScroll.setBounds(sc(rb.x, s), sc(rb.y, s), sc(rb.width, s), newH);
+            numerosScroll.setBounds(sc(rb.x, s), sc(rb.y, s), sc(rb.width, s),
+                    sc(rb.height, s) + extraNumeros);
         }
         if (ganadoresScroll != null) {
             Rectangle rb = baseMap.get(ganadoresScroll).r;
-            int newH = sc(rb.height, s) + extraGanadores;
-            ganadoresScroll.setBounds(sc(rb.x, s), sc(rb.y, s), sc(rb.width, s), newH);
+            ganadoresScroll.setBounds(sc(rb.x, s), sc(rb.y, s), sc(rb.width, s),
+                    sc(rb.height, s) + extraGanadores);
         }
 
-        int alturaTotalPlayfield = altoEscalado + extraH;
-
-        int finalW = Math.min(anchoEscalado,         MAX_W);
-        int finalH = Math.min(alturaTotalPlayfield,  MAX_H);
+        // 6) Preferencias del tablero para que FlowLayout del wrapper lo centre bien
+        int finalW = Math.min(anchoEscalado, MAX_W);
+        int finalH = Math.min(altoEscalado + extraH, MAX_H);
         playfield.setPreferredSize(new Dimension(finalW, finalH));
 
-        boolean atMaxW = (finalW >= MAX_W);
-        boolean atMaxH = (finalH >= MAX_H);
-        boolean atMax  = atMaxW || atMaxH;
+        // 7) (Opcional) escalar tipografías si lo habilitas
+        if (SCALE_FONTS) scaleFonts(s);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0; gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = atMax ? 1.0 : 0.0;
-        gbc.anchor  = atMax ? GridBagConstraints.SOUTH : GridBagConstraints.NORTH;
-        gbc.fill    = GridBagConstraints.NONE;
-
-        center.remove(playfield);
-        center.add(playfield, gbc);
-
-        System.out.println(new java.io.File("img/carrusel").getAbsolutePath());//test
-
-        playfield.revalidate();
+        // 8) Refresco ordenado (wrapper + center)
+        if (playWrapper != null) { playWrapper.revalidate(); playWrapper.repaint(); }
         center.revalidate();
         center.repaint();
     }
@@ -633,5 +646,25 @@ public class BingoRoller extends JFrame {
     // *************************************************************************************************** HEADER
     private JPanel buildHeaderPanel() {
         return HeaderSeccion.create();
+    }
+
+    private void scaleFonts(double s) {
+        java.util.function.Consumer<Component> apply = new java.util.function.Consumer<>() {
+            public void accept(Component c) {
+                if (c instanceof JComponent jc) {
+                    Object bp = jc.getClientProperty("basePt");
+                    if (bp instanceof Number) {
+                        float base = ((Number) bp).floatValue();
+                        float pt   = Math.max(6f, base * (float) s);
+                        Font f = c.getFont();
+                        if (f != null) c.setFont(f.deriveFont(pt));
+                    }
+                }
+                if (c instanceof Container ct) {
+                    for (Component ch : ct.getComponents()) accept(ch);
+                }
+            }
+        };
+        apply.accept(playfield);
     }
 }

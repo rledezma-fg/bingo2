@@ -6,26 +6,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NumerosLogPanel {
-    private static final int COLS_MAX = 7;
+    private static final int COLS_MAX = 15;
     private final JTextArea area;
     private final JScrollPane scroll;
 
     private final List<String> items = new ArrayList<>();
-    private int cols = 7;
+    private int cols = 15;
     private int colWidth = 12;
     private boolean porColumnas = false;
 
+    // ---------- para crear panel de numeros ----------
     public NumerosLogPanel(){
         area = new JTextArea();
         area.setEditable(false);
-        area.setFont(new Font("Courier New", Font.PLAIN, 12));
+        area.setFont(new Font("Courier New", Font.PLAIN, 16));
         scroll = new JScrollPane(area);
     }
 
     public JTextArea getArea(){ return area; }
     public JScrollPane getScroll(){ return scroll; }
 
-    // para llenar por filas o columnas, solo pasar parametro booleano en parametros
+
+
+    // ---------- vagregar número al log ----------
+    public void addNumero(char letter, int number) {
+        items.add(String.format("(%s%d)", letter, number));
+        render();
+    }
+
+    // ---------- limpiar log ----------
+    public void clear() {
+        items.clear();
+        render();
+    }
+
+    // ---------- para llenar por filas o columnas, solo pasar parametro booleano en parametros ----------
     public void setLayoutConfig(int cols, int colWidth, boolean porColumnas) {
         this.cols = Math.max(1, cols);
         this.colWidth = Math.max(1, colWidth);
@@ -33,18 +48,7 @@ public class NumerosLogPanel {
         render();
     }
 
-    // agregar número al log
-    public void addNumero(char letter, int number) {
-        items.add(String.format("Num(%s%d)", letter, number));
-        render();
-    }
-
-    // limpiar log
-    public void clear() {
-        items.clear();
-        render();
-    }
-
+    // ---------- para llenar por columnas o filas la parte del numerosLog ----------
     public static String format(List<String> items, int cols, int colWidth, boolean porColumnas){
         int n = items.size();
         if (n == 0) return "";
@@ -57,7 +61,7 @@ public class NumerosLogPanel {
         int rows = (int) Math.ceil(n / (double) cols);
         StringBuilder sb = new StringBuilder();
 
-        if(porColumnas){ // llenado por columna
+        if(porColumnas){ // ----- llenado por columna
             for(int r=0;r<rows;r++){
                 for(int c=0;c<cols;c++){
                     int idx= c*rows + r;
@@ -69,7 +73,7 @@ public class NumerosLogPanel {
                 }
                 sb.append('\n');
             }
-        } else { // llenado por filas (horizontal)
+        } else { // ----- llenado por filas (horizontal)
             for(int r=0;r<rows;r++){
                 for (int c=0;c<cols;c++){
                     int idx = r*cols + c;
@@ -86,7 +90,7 @@ public class NumerosLogPanel {
         return sb.toString();
     }
 
-    // --- render interno ---
+    // ---------- render interno ----------
     private void render() {
         String text = format(items, cols, colWidth, porColumnas);
         area.setText(text);

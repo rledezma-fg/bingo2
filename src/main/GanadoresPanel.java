@@ -10,7 +10,7 @@ public class GanadoresPanel {
     public GanadoresPanel(){
         area = new JTextArea();
         area.setEditable(false);
-        area.setFont(new Font("Courier New", Font.PLAIN, 12));
+        area.setFont(new Font("Courier New", Font.PLAIN, 16));
         scroll = new JScrollPane(area);
     }
 
